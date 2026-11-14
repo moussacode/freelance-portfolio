@@ -1,0 +1,567 @@
+/* ---------- En-tête : une pilule de verre qui se resserre et se déploie ---------- */
+.hdr {
+  --spring: cubic-bezier(0.32, 0.72, 0, 1); /* courbe douce, sans rebond */
+  position: fixed;
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  left: var(--pad);
+  right: var(--pad);
+  z-index: 40;
+  pointer-events: none;
+}
+/* Nommer la barre en permanence l'isolerait de la page et casserait le flou du verre :
+   on ne la nomme que pendant une transition de page, pour qu'elle reste en place. */
+.vt-nav .hdr {
+  view-transition-name: hdr;
+}
+.hdr > * {
+  pointer-events: auto;
+}
+.hdr__bar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 100%;
+  height: 56px;
+  margin-inline: auto;
+  padding: 0 6px;
+  border-radius: 999px;
+  transition:
+    max-width 0.7s var(--spring),
+    transform 0.5s var(--spring),
+    opacity 0.35s ease;
+}
+.hdr[data-state='compact'] .hdr__bar {
+  max-width: 272px;
+}
+.hdr[data-hidden='true'] .hdr__bar {
+  transform: translateY(calc(-100% - 24px)) scale(0.96);
+  opacity: 0;
+}
+
+/* Identité : photo, statut, nom */
+.hdr__id {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  height: 44px;
+  padding: 0 14px 0 4px;
+  border-radius: 999px;
+}
+.hdr__avatar {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+}
+.hdr__avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.hdr__status {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #23b26d;
+  box-shadow: 0 0 0 2px var(--bg-raise);
+}
+.hdr__name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+/* Zone qui se replie : liens et réglages */
+.hdr__more {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  justify-content: flex-end;
+  overflow: hidden;
+  padding: 4px 0; /* laisse respirer l'anneau de focus */
+  transition:
+    opacity 0.45s ease 0.12s,
+    visibility 0s;
+}
+.hdr[data-state='compact'] .hdr__more {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s ease,
+    visibility 0s 0.2s;
+}
+.hdr__more-in {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  padding: 0 2px;
+}
+.hdr__nav {
+  display: none;
+}
+.hdr__nav a {
+  position: relative;
+  padding: 9px 14px;
+  border-radius: 999px;
+  font-size: 0.97rem;
+  font-weight: 500;
+  color: var(--ink-2);
+  transition: color 0.2s;
+}
+.hdr__nav a::after {
+  content: '';
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 5px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--spring);
+}
+.hdr__nav a:hover {
+  color: var(--ink);
+}
+.hdr__nav a:hover::after {
+  transform: scaleX(1);
+}
+.hdr__sep {
+  display: none;
+  width: 1px;
+  height: 20px;
+  margin: 0 8px;
+  background: var(--line);
+}
+.hdr__langs {
+  display: none;
+  padding: 0 4px;
+}
+.langs {
+  display: flex;
+  gap: 2px;
+}
+.langs a {
+  display: block;
+  padding: 6px 9px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+.langs a:hover {
+  color: var(--ink);
+}
+.langs a[aria-current] {
+  background: var(--ink);
+  color: var(--bg);
+}
+
+/* Les trois points : menu sur mobile, déploiement sur ordinateur */
+.hdr__dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  transition:
+    background-color 0.2s,
+    width 0.6s var(--spring),
+    opacity 0.3s;
+}
+.hdr__dots:hover {
+  background: var(--glass-shade);
+}
+.hdr__dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--brand);
+  animation: dots 1.8s ease-in-out infinite;
+}
+.hdr__dots i:nth-child(2) {
+  animation-delay: 0.18s;
+}
+.hdr__dots i:nth-child(3) {
+  animation-delay: 0.36s;
+  background: var(--sun);
+}
+@keyframes dots {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.55;
+  }
+  30% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+/* Menu mobile */
+.hdr__sheet {
+  position: absolute;
+  top: 66px;
+  left: 0;
+  right: 0;
+  padding: 14px 18px 18px;
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: color-mix(in srgb, var(--bg-raise) 88%, transparent);
+  animation: sheet-in 0.45s var(--spring);
+}
+.hdr__sheet nav {
+  display: flex;
+  flex-direction: column;
+}
+.hdr__sheet nav a {
+  padding: 12px 4px;
+  font-size: 1.6rem;
+  letter-spacing: -0.025em;
+  font-family: var(--font-display);
+  font-weight: 800;
+  border-bottom: 1px solid var(--line);
+}
+.hdr__sheet .langs a {
+  padding: 9px 14px;
+  font-size: 0.95rem;
+}
+
+@media (min-width: 820px) {
+  .hdr__nav,
+  .hdr__sep,
+  .hdr__langs {
+    display: flex;
+  }
+  .hdr__sheet {
+    display: none;
+  }
+  /* Déployée, la pilule n'a plus besoin des points */
+  .hdr[data-state='full'] .hdr__dots {
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .hdr[data-state='compact'] .hdr__dots {
+    margin-left: auto;
+  }
+}
+
+/* ---------- Ambiance sonore ---------- */
+.snd__pop {
+  position: fixed;
+  z-index: 45;
+  width: min(272px, calc(100vw - 2 * var(--pad)));
+  padding: 16px;
+  border-radius: 26px;
+  display: grid;
+  gap: 12px;
+}
+.snd__title {
+  font-weight: 600;
+}
+.snd__moods {
+  display: grid;
+  gap: 4px;
+}
+.snd__mood {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  border-radius: 14px;
+  text-align: left;
+  transition: background-color 0.2s;
+}
+.snd__mood:hover {
+  background: var(--glass-shade);
+}
+.snd__mood[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--bg);
+}
+.snd__vol {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.92rem;
+  color: var(--ink-2);
+}
+.snd__vol input {
+  width: 100%;
+  accent-color: var(--brand);
+}
+.snd__off {
+  justify-self: start;
+  font-size: 0.92rem;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.snd__off:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+.snd__note {
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+
+/* ---------- Fenêtres : aperçu rapide et jeu ---------- */
+dialog.sheet {
+  width: 100%;
+  max-width: min(980px, calc(100vw - 24px));
+  max-height: calc(100svh - 24px);
+  margin: auto auto calc(12px + env(safe-area-inset-bottom, 0px));
+  padding: 0;
+  border-radius: 32px;
+  color: var(--ink);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+dialog.sheet::backdrop {
+  background: var(--veil);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+dialog.sheet[open] {
+  animation: sheet-in 0.5s var(--ease);
+}
+dialog.sheet[open]::backdrop {
+  animation: veil-in 0.4s ease;
+}
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(32px) scale(0.97);
+  }
+}
+@keyframes veil-in {
+  from {
+    opacity: 0;
+  }
+}
+.sheet__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: var(--glass);
+}
+@media (min-width: 820px) {
+  dialog.sheet {
+    margin: auto;
+  }
+}
+
+.ql__in {
+  position: relative;
+  display: grid;
+  gap: 20px;
+  padding: 16px;
+}
+.ql__cover {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.ql__body {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  padding: 0 6px 8px;
+}
+.ql__frame {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink-2);
+  font-size: 0.95rem;
+}
+.ql__title {
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-family: var(--font-display);
+  font-weight: 800;
+}
+.ql__tag {
+  font-size: 1.15rem;
+}
+.ql__context {
+  color: var(--ink-2);
+  max-width: 56ch;
+}
+.ql__facts {
+  display: grid;
+  gap: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  font-size: 0.97rem;
+}
+.ql__facts dt {
+  color: var(--ink-2);
+  font-size: 0.88rem;
+}
+.ql__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  padding-top: 8px;
+}
+@media (min-width: 820px) {
+  .ql__in {
+    grid-template-columns: 320px 1fr;
+    gap: 32px;
+    padding: 24px;
+  }
+  .ql__cover {
+    aspect-ratio: 4 / 5;
+    border-radius: var(--arch);
+  }
+  .ql__body {
+    padding: 28px 40px 8px 0;
+  }
+}
+
+.plinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.plinks--compact {
+  gap: 6px 18px;
+  font-size: 0.95rem;
+}
+
+.game {
+  max-width: min(800px, calc(100vw - 24px));
+}
+.game__in {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+}
+.game__head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.game__head h2 {
+  font-size: 1.5rem;
+  margin-right: auto;
+}
+.game__score {
+  display: flex;
+  gap: 16px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+.game__score strong {
+  color: var(--ink);
+}
+.game__stage {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--bg);
+}
+.game__stage canvas {
+  width: 100%;
+  aspect-ratio: 720 / 320;
+  touch-action: none;
+  cursor: pointer;
+}
+.game__over {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 12px;
+  background: color-mix(in srgb, var(--bg) 62%, transparent);
+  font-size: 1.3rem;
+  font-weight: 500;
+}
+.game__hint {
+  color: var(--ink-2);
+  font-size: 0.92rem;
+}
+
+/* ---------- Pied de page ---------- */
+.ftr {
+  margin-top: clamp(96px, 16vh, 200px);
+  padding: 0 var(--pad) calc(32px + env(safe-area-inset-bottom, 0px));
+  display: grid;
+  gap: 32px;
+}
+.ftr__logo {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(12px, 2.4vw, 36px);
+  color: var(--brand);
+  padding-top: 48px;
+  border-top: 1px solid var(--line);
+}
+.ftr__logo svg:first-child {
+  width: clamp(96px, 20vw, 290px);
+  height: auto;
+}
+.ftr__logo svg:last-child {
+  width: clamp(110px, 23vw, 330px);
+  height: auto;
+}
+.ftr__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 32px;
+}
+.ftr__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--sun);
+}
+.sig {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 600;
+}
+.sig__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--sun);
+  overflow: hidden;
+}
+.sig__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.ftr__rights {
+  color: var(--ink-2);
+  font-size: 0.92rem;
+}

@@ -1,0 +1,613 @@
+/* ---------- Boutons propres au site freelance ---------- */
+.btn--big {
+  min-height: 56px;
+  padding: 0 26px;
+  font-size: 1.05rem;
+}
+/* Action principale : teal plein, pour qu'elle se distingue des boutons encre */
+.btn--wa {
+  background: #006989;
+  border-color: #006989;
+  color: #fff;
+}
+.btn--wa:hover {
+  background: #0b1f2a;
+  border-color: #0b1f2a;
+}
+:root[data-theme='dark'] .btn--wa:hover {
+  background: #f5f2ec;
+  border-color: #f5f2ec;
+  color: #0b1f2a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .btn--wa:hover {
+    background: #f5f2ec;
+    border-color: #f5f2ec;
+    color: #0b1f2a;
+  }
+}
+.round--small {
+  width: 40px;
+  height: 40px;
+}
+.tick {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--brand);
+  color: var(--bg-raise);
+}
+.hdr__cta {
+  display: none;
+  margin-left: 8px;
+}
+@media (min-width: 820px) {
+  .hdr__cta {
+    display: inline-flex;
+  }
+}
+.hdr__sheet > .btn {
+  align-self: stretch;
+}
+
+/* ---------- Sections ---------- */
+.sec {
+  padding: clamp(80px, 13vh, 160px) var(--pad) 0;
+}
+.sec--tight {
+  padding-top: clamp(40px, 7vh, 80px);
+}
+.sec__head {
+  display: grid;
+  gap: 16px;
+}
+.sec__title {
+  font-size: clamp(2.2rem, 5.6vw, 4.8rem);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+}
+.sec__intro {
+  max-width: 44ch;
+  color: var(--ink-2);
+  font-size: 1.1rem;
+}
+@media (min-width: 900px) {
+  .sec__head {
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: var(--gap);
+    align-items: end;
+  }
+  .sec__title {
+    grid-column: 1 / 8;
+  }
+  .sec__intro {
+    grid-column: 8 / -1;
+    padding-bottom: 0.5em;
+  }
+}
+
+/* ---------- Accueil ---------- */
+.fhero {
+  display: grid;
+  gap: 28px;
+  padding: calc(var(--hdr) + env(safe-area-inset-top, 0px) + 24px) var(--pad) 0;
+}
+.fhero__title {
+  margin-top: clamp(16px, 2.6vh, 28px);
+  font-size: clamp(2.5rem, 7vw, 6.2rem);
+  line-height: 0.96;
+  letter-spacing: -0.025em;
+  max-width: 11em;
+}
+.fhero__lead {
+  margin-top: clamp(16px, 2.4vh, 26px);
+  max-width: 40ch;
+  font-size: clamp(1.1rem, 1.5vw, 1.3rem);
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.fhero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: clamp(22px, 3.4vh, 36px);
+}
+.fhero__visual {
+  position: relative;
+  width: min(100%, 440px);
+  aspect-ratio: 1 / 1.08;
+  margin-inline: auto;
+}
+/* Seule la scène coupe la photo en bas ; la carte, elle, peut déborder */
+.fhero__stage {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+}
+/* Le disque ambre : la seule forme ambre de l'écran */
+.fhero__disc {
+  position: absolute;
+  left: 50%;
+  bottom: 4%;
+  width: 88%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--sun);
+  translate: -50% 0;
+}
+.fhero__photo {
+  position: absolute;
+  left: 50%;
+  top: 2%;
+  width: 72%;
+  height: auto;
+  translate: -50% 0;
+}
+.fhero__card {
+  position: absolute;
+  left: 0;
+  bottom: 7%;
+  padding: 16px 20px 18px;
+  border-radius: 22px;
+}
+.fhero__card ul {
+  display: grid;
+  gap: 9px;
+  margin-top: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.fhero__card li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+@media (max-width: 899px) {
+  .fhero__card .tick {
+    width: 20px;
+    height: 20px;
+  }
+}
+@media (min-width: 900px) {
+  .fhero {
+    grid-template-columns: repeat(12, 1fr);
+    column-gap: var(--gap);
+    align-items: end;
+    min-height: min(100svh, 920px);
+  }
+  .fhero__text {
+    grid-column: 1 / 8;
+    padding-bottom: clamp(40px, 9vh, 110px);
+  }
+  .fhero__visual {
+    grid-column: 8 / -1;
+    width: 100%;
+    max-width: 560px;
+    justify-self: end;
+    margin: 0;
+  }
+  .fhero__card {
+    left: -4%;
+    bottom: 12%;
+    padding: 20px 24px 22px;
+  }
+  .fhero__card ul {
+    font-size: 1.02rem;
+  }
+}
+
+/* ---------- Trois raisons ---------- */
+.reasons {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+.reasons li {
+  padding: 22px 0;
+  border-bottom: 1px solid var(--line);
+}
+.reasons h3 {
+  font-size: 1.35rem;
+  letter-spacing: -0.015em;
+}
+.reasons p {
+  margin-top: 8px;
+  color: var(--ink-2);
+  max-width: 36ch;
+}
+@media (min-width: 900px) {
+  .reasons {
+    grid-template-columns: repeat(3, 1fr);
+    column-gap: var(--gap);
+    border-bottom: 1px solid var(--line);
+  }
+  .reasons li {
+    padding: 30px 0 34px;
+    border-bottom: 0;
+  }
+  .reasons h3 {
+    font-size: 1.6rem;
+  }
+}
+
+/* ---------- Services ---------- */
+.services {
+  display: grid;
+  gap: var(--gap);
+  margin-top: clamp(28px, 5vh, 60px);
+}
+.service {
+  display: flex;
+  flex-direction: column;
+  padding: clamp(24px, 2.4vw, 34px);
+  transition: transform 0.4s var(--ease);
+}
+.service__name {
+  font-size: clamp(1.6rem, 2.2vw, 2rem);
+  letter-spacing: -0.02em;
+}
+.service__pitch {
+  margin-top: 10px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.service .label {
+  margin-top: 22px;
+}
+.service__points {
+  display: grid;
+  gap: 10px;
+  margin: 12px 0 26px;
+  font-weight: 500;
+}
+.service__points li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  line-height: 1.4;
+}
+.service__ask {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-weight: 600;
+}
+.service__ask:hover .round {
+  background: var(--brand);
+  transform: translateX(4px);
+}
+@media (hover: hover) {
+  .service:hover {
+    transform: translateY(-4px);
+  }
+}
+@media (min-width: 720px) {
+  .services {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 1140px) {
+  .services {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Réalisations ---------- */
+.works {
+  display: grid;
+  gap: clamp(32px, 4vw, 56px) var(--gap);
+  margin-top: clamp(28px, 5vh, 60px);
+}
+.work {
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  gap: 10px;
+}
+.work__cover {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  margin-bottom: 8px;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+.work__name {
+  font-size: clamp(1.5rem, 2.2vw, 2rem);
+  letter-spacing: -0.02em;
+}
+.work__text {
+  max-width: 52ch;
+  line-height: 1.5;
+}
+.work__frame {
+  font-size: 0.92rem;
+  color: var(--ink-2);
+}
+.works__all {
+  margin-top: clamp(28px, 4vh, 44px);
+}
+@media (min-width: 760px) {
+  .works {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Méthode ---------- */
+.steps {
+  display: grid;
+  gap: var(--gap);
+  margin-top: clamp(28px, 5vh, 60px);
+}
+.fstep {
+  padding-top: 20px;
+  border-top: 2px solid var(--ink);
+}
+.fstep__n {
+  font-family: var(--font-display);
+  font-size: 3.2rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--brand);
+}
+.fstep h3 {
+  margin-top: 14px;
+  font-size: 1.4rem;
+  letter-spacing: -0.015em;
+}
+.fstep p:last-child {
+  margin-top: 8px;
+  color: var(--ink-2);
+  max-width: 34ch;
+}
+@media (min-width: 640px) {
+  .steps {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 1100px) {
+  .steps {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ---------- Avis ---------- */
+.quotes {
+  display: grid;
+  gap: var(--gap);
+  margin-top: clamp(28px, 5vh, 60px);
+}
+.quote {
+  padding: 28px;
+}
+.quote blockquote {
+  margin: 0 0 16px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  line-height: 1.45;
+}
+@media (min-width: 900px) {
+  .quotes {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ---------- Questions ---------- */
+.faq {
+  display: grid;
+  gap: 12px;
+  max-width: 900px;
+  margin-top: clamp(28px, 5vh, 60px);
+}
+.faq__item {
+  border-radius: 22px;
+}
+.faq__item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+  padding: 14px 22px;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  list-style: none;
+  border-radius: 22px;
+}
+.faq__item summary::-webkit-details-marker {
+  display: none;
+}
+.faq__plus {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--ink);
+  transition: transform 0.35s var(--ease), background-color 0.25s;
+}
+.faq__plus::before,
+.faq__plus::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: 12px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--bg);
+}
+.faq__plus::after {
+  transform: rotate(90deg);
+}
+.faq__item[open] .faq__plus {
+  transform: rotate(45deg);
+  background: var(--brand);
+}
+.faq__item p {
+  padding: 0 22px 22px;
+  max-width: 62ch;
+  color: var(--ink-2);
+  line-height: 1.55;
+}
+
+/* ---------- Contact : fond teal, grille blanche, comme la slide d'appel à l'action ---------- */
+.fcontact {
+  margin: clamp(88px, 14vh, 170px) var(--pad) 0;
+  border-radius: clamp(28px, 4vw, 48px);
+  background-color: #006989;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.07) 1px, transparent 1px);
+  background-size: var(--grid-size) var(--grid-size);
+  color: #fff;
+  scroll-margin-top: calc(var(--hdr) + 12px);
+}
+.fcontact__in {
+  display: grid;
+  gap: 32px;
+  padding: clamp(28px, 5vw, 72px);
+}
+.fcontact__title {
+  font-size: clamp(2.3rem, 6vw, 5.2rem);
+  line-height: 0.96;
+  letter-spacing: -0.025em;
+}
+.fcontact__title .accent {
+  color: #ffb400; /* sur fond teal, le passage accentué passe en ambre */
+}
+.fcontact__lead {
+  margin-top: 18px;
+  max-width: 34ch;
+  font-size: 1.15rem;
+  color: rgba(255, 255, 255, 0.86);
+}
+.fcontact__direct {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+  margin-top: clamp(24px, 4vh, 44px);
+}
+.fcontact__direct .label {
+  color: rgba(255, 255, 255, 0.72);
+}
+.fcontact__mail {
+  font-family: var(--font-display);
+  font-size: clamp(0.92rem, 4vw, 1.5rem);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+.fcontact .tlink {
+  text-decoration-color: rgba(255, 255, 255, 0.5);
+}
+.fcontact .tlink:hover {
+  color: #ffb400;
+}
+.fcontact :focus-visible {
+  outline-color: #fff;
+}
+.brief {
+  display: grid;
+  gap: 18px;
+  padding: clamp(20px, 3vw, 34px);
+  color: var(--ink);
+}
+.brief :focus-visible {
+  outline-color: var(--brand);
+}
+.field {
+  display: grid;
+  gap: 8px;
+}
+.field > span {
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  background: var(--bg);
+  color: var(--ink);
+  font: inherit;
+  transition: border-color 0.2s;
+}
+.field textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+.field input:hover,
+.field select:hover,
+.field textarea:hover,
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--brand);
+}
+.field ::placeholder {
+  color: var(--ink-2);
+  opacity: 0.85;
+}
+.brief__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.brief__actions .btn {
+  flex: 1 1 220px;
+}
+.brief__note {
+  font-size: 0.88rem;
+  color: var(--ink-2);
+}
+@media (min-width: 980px) {
+  .fcontact__in {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    gap: clamp(32px, 5vw, 80px);
+    align-items: center;
+  }
+}
+
+/* ---------- Bouton fixe sur téléphone ---------- */
+.sticky {
+  position: fixed;
+  left: var(--pad);
+  right: var(--pad);
+  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  z-index: 35;
+  transform: translateY(140%);
+  transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.sticky[data-show='true'] {
+  transform: none;
+}
+.sticky .btn {
+  width: 100%;
+  min-height: 54px;
+  box-shadow: 0 16px 34px -14px rgba(11, 31, 42, 0.5);
+}
+@media (min-width: 820px) {
+  .sticky {
+    display: none;
+  }
+}
+@media (max-width: 819px) {
+  .ftr {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  }
+}

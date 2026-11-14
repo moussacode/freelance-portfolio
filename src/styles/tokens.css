@@ -1,0 +1,89 @@
+/*
+  Jetons du design system MoussaCode « Studio clair » (le même que les carousels, fichier Figma de Moussa).
+  Couleurs : fond crème, encre, teal du logo, ambre (une seule forme ambre par écran), gris secondaire.
+  Polices : Bricolage Grotesque ExtraBold pour les titres, Inter pour le texte.
+  Le thème sombre prend l'encre comme fond. Il s'applique si le système est en sombre,
+  ou si data-theme="dark" est posé sur <html>.
+*/
+:root {
+  color-scheme: light;
+  --bg: #f5f2ec; /* fond */
+  --bg-raise: #ffffff; /* carte */
+  --ink: #0b1f2a; /* encre */
+  --ink-2: #5b6b73; /* texte secondaire */
+  --line: rgba(11, 31, 42, 0.12);
+  --grid: rgba(11, 31, 42, 0.05);
+  --brand: #006989; /* teal */
+  --sun: #ffb400; /* ambre */
+  --error: #e5484d; /* erreur, uniquement pour un badge d'erreur */
+  --tag-bg: #0b1f2a;
+  --tag-ink: #ffffff;
+
+  --glass: rgba(255, 255, 255, 0.62);
+  --glass-edge: rgba(255, 255, 255, 0.95);
+  --glass-sheen: rgba(255, 255, 255, 0.5);
+  --glass-shade: rgba(11, 31, 42, 0.07);
+  --shadow: rgba(11, 31, 42, 0.18);
+  --veil: rgba(11, 31, 42, 0.3);
+  --card-shadow: 0 1px 2px rgba(11, 31, 42, 0.04), 0 18px 40px -24px rgba(11, 31, 42, 0.22);
+
+  --font-display: var(--font-bricolage), 'Bricolage Grotesque', ui-sans-serif, system-ui, sans-serif;
+  --font-body: var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --pad: clamp(18px, 4vw, 72px); /* marges de 72 px, comme les slides */
+  --gap: clamp(14px, 2vw, 28px);
+  --grid-size: 64px;
+  --radius-card: 28px;
+  --hdr: 76px;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --arch: 50% 50% 20px 20px / 40% 40% 20px 20px; /* arche pour un cadre 4:5 */
+}
+@media (min-width: 900px) {
+  :root {
+    --grid-size: 120px;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #0b1f2a;
+    --bg-raise: #12303d;
+    --ink: #f5f2ec;
+    --ink-2: #9fb0b8;
+    --line: rgba(245, 242, 236, 0.14);
+    --grid: rgba(245, 242, 236, 0.045);
+    --brand: #4fb4d6;
+    --sun: #ffb400;
+    --tag-bg: #f5f2ec;
+    --tag-ink: #0b1f2a;
+    --glass: rgba(18, 48, 61, 0.6);
+    --glass-edge: rgba(255, 255, 255, 0.14);
+    --glass-sheen: rgba(255, 255, 255, 0.06);
+    --glass-shade: rgba(0, 0, 0, 0.25);
+    --shadow: rgba(0, 0, 0, 0.55);
+    --veil: rgba(0, 0, 0, 0.5);
+    --card-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 18px 40px -24px rgba(0, 0, 0, 0.6);
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0b1f2a;
+  --bg-raise: #12303d;
+  --ink: #f5f2ec;
+  --ink-2: #9fb0b8;
+  --line: rgba(245, 242, 236, 0.14);
+  --grid: rgba(245, 242, 236, 0.045);
+  --brand: #4fb4d6;
+  --sun: #ffb400;
+  --tag-bg: #f5f2ec;
+  --tag-ink: #0b1f2a;
+  --glass: rgba(18, 48, 61, 0.6);
+  --glass-edge: rgba(255, 255, 255, 0.14);
+  --glass-sheen: rgba(255, 255, 255, 0.06);
+  --glass-shade: rgba(0, 0, 0, 0.25);
+  --shadow: rgba(0, 0, 0, 0.55);
+  --veil: rgba(0, 0, 0, 0.5);
+  --card-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 18px 40px -24px rgba(0, 0, 0, 0.6);
+}
