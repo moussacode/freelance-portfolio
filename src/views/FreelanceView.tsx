@@ -20,7 +20,7 @@ export function FreelanceView() {
       <Hero />
       <Reasons />
       <Services />
-      <Works />
+      {/* <Works /> */}
       <Method />
       {testimonials.length > 0 && <Testimonials />}
       <Faq />
@@ -185,41 +185,41 @@ function Services() {
 }
 
 /* ---------- Réalisations ---------- */
-function Works() {
-  const { locale, dict } = useApp();
-  return (
-    <section id="realisations" className="sec">
-      <header className="sec__head">
-        <h2 className="sec__title" data-split>
-          <Accented text={dict.works.title} />
-        </h2>
-        <p className="sec__intro">{dict.works.intro}</p>
-      </header>
-      <ul className="works" data-rows>
-        {works.map((w) => (
-          <li key={w.name.fr} className="work">
-            <div className="work__cover">
-              <Poster id={w.cover} />
-            </div>
-            <p className="tag">{tr(w.kind, locale)}</p>
-            <h3 className="work__name">{tr(w.name, locale)}</h3>
-            <p className="work__text">{tr(w.text, locale)}</p>
-            <p className="work__frame">{tr(w.frame, locale)}</p>
-          </li>
-        ))}
-      </ul>
-      {/* {person.portfolio && (
-        <p className="works__all">
-          <a className="tlink" href={person.portfolio} target="_blank" rel="noopener noreferrer">
-            {dict.works.all}
-            <External />
-            <span className="sr">({dict.a11y.newTab})</span>
-          </a>
-        </p>
-      )} */}
-    </section>
-  );
-}
+// function Works() {
+//   const { locale, dict } = useApp();
+//   return (
+//     <section id="realisations" className="sec">
+//       <header className="sec__head">
+//         <h2 className="sec__title" data-split>
+//           <Accented text={dict.works.title} />
+//         </h2>
+//         <p className="sec__intro">{dict.works.intro}</p>
+//       </header>
+//       <ul className="works" data-rows>
+//         {works.map((w) => (
+//           <li key={w.name.fr} className="work">
+//             <div className="work__cover">
+//               <Poster id={w.cover} />
+//             </div>
+//             <p className="tag">{tr(w.kind, locale)}</p>
+//             <h3 className="work__name">{tr(w.name, locale)}</h3>
+//             <p className="work__text">{tr(w.text, locale)}</p>
+//             <p className="work__frame">{tr(w.frame, locale)}</p>
+//           </li>
+//         ))}
+//       </ul>
+//       {/* {person.portfolio && (
+//         <p className="works__all">
+//           <a className="tlink" href={person.portfolio} target="_blank" rel="noopener noreferrer">
+//             {dict.works.all}
+//             <External />
+//             <span className="sr">({dict.a11y.newTab})</span>
+//           </a>
+//         </p>
+//       )} */}
+//     </section>
+//   );
+// }
 
 /* ---------- Méthode : une vraie suite d'étapes, donc numérotée ---------- */
 function Method() {
