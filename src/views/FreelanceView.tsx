@@ -77,9 +77,9 @@ function Hero() {
               {dict.hero.primaryNoWa}
             </TLink>
           )}
-          <TLink className="btn btn--big" href={`/${locale}#realisations`}>
+          {/* <TLink className="btn btn--big" href={`/${locale}#realisations`}>
             {dict.hero.secondary}
-          </TLink>
+          </TLink> */}
         </div>
       </div>
 
