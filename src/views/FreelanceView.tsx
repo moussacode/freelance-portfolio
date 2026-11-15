@@ -9,8 +9,9 @@ import { TLink } from '@/components/TLink';
 import { Accented } from '@/components/Accented';
 import { Poster } from '@/components/Cover';
 import { Arrow, Chat, Check, External, Mail } from '@/components/Icons';
-import { gsap, motionOK, SplitText, useGSAP } from '@/lib/gsap';
+import { gsap, motionOK, ScrollTrigger, SplitText, useGSAP } from '@/lib/gsap';
 import { useReveals } from '@/lib/useReveals';
+import { createLiquid, type Liquid } from '@/lib/liquidTitle';
 
 export function FreelanceView() {
   const root = useRef<HTMLDivElement>(null);
@@ -34,24 +35,118 @@ function Hero() {
   const { locale, dict } = useApp();
   const root = useRef<HTMLElement>(null);
 
-  // Une seule séquence à l'arrivée : le disque s'ouvre, la photo monte, le titre se pose.
+  // Une entrée joueuse, en moins de deux secondes :
+  // le disque rebondit, Moussa surgit derrière, la carte se pose de travers puis se redresse,
+  // les mots du titre sautent un à un. Ensuite, la fin du titre change, sans se presser.
+  // Sur ordinateur, le titre devient liquide (lib/liquidTitle) : la souris en arrache des gouttes
+  // et les fins se fondent l'une dans l'autre. Ailleurs, le fondu passe par un filtre SVG (#fhero-goo).
+  // Tout est en gsap.from : sans JavaScript ou en version calme, la page est déjà complète.
   useGSAP(
-    () => {
-      if (!motionOK()) return;
-      const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
-      tl.from('.fhero__disc', { scale: 0.4, duration: 1.2 }, 0)
-        .from('.fhero__photo', { yPercent: 12, duration: 1.2 }, 0.05)
-        .from('.fhero__card', { y: 24, autoAlpha: 0, duration: 0.8 }, 0.5);
-      document.fonts.ready.then(() => {
+    (_context, contextSafe) => {
+      if (!motionOK() || !contextSafe) return;
+
+      const tl = gsap.timeline({ defaults: { ease: 'back.out(1.7)' } });
+      tl.from('.fhero__disc', { scale: 0, transformOrigin: '50% 100%', duration: 0.9, ease: 'elastic.out(1, 0.55)' }, 0)
+        .from('.fhero__photo', { yPercent: 35, duration: 0.9 }, 0.15)
+        .from('.fhero__text .tag', { scale: 0.6, rotation: -8, transformOrigin: '0% 50%', duration: 0.6 }, 0.1)
+        .from('.fhero__card', { y: 40, rotation: -9, scale: 0.85, autoAlpha: 0, duration: 0.8 }, 0.55)
+        .from('.fhero__card .tick', { scale: 0, duration: 0.4, ease: 'back.out(3)', stagger: 0.08 }, 0.85)
+        // Les boutons restent visibles : un simple rebond d'échelle, sans opacité.
+        .from('.fhero__cta > *', { scale: 0.92, duration: 0.6, ease: 'elastic.out(1, 0.5)', stagger: 0.08 }, 0.6);
+
+      let cancelled = false;
+      let visible = true;
+      let current = 0;
+      let liquid: Liquid | null = null;
+      const PAUSE = 4.6; // temps de lecture d'une fin de titre
+      const stopLiquid = () => {
+        liquid?.destroy();
+        liquid = null;
+        root.current?.querySelector('.fhero__title')?.classList.remove('is-liquid');
+      };
+
+      // Une fin de titre s'efface pendant que la suivante apparaît ; le filtre les fait fusionner.
+      // On joue sur l'opacité seule : le texte reste lisible par les lecteurs d'écran.
+      const morph = contextSafe(() => {
+        if (cancelled) return;
+        const rotor = root.current?.querySelector<HTMLElement>('.fhero__rotor');
+        const ends = gsap.utils.toArray<HTMLElement>('.fhero__end', root.current);
+        if (!rotor || ends.length < 2) return;
+        if (!visible || document.hidden) {
+          gsap.delayedCall(1, morph);
+          return;
+        }
+        const out = ends[current];
+        current = (current + 1) % ends.length;
+        const inn = ends[current];
+        if (liquid) {
+          // Titre liquide : c'est la matière elle-même qui passe d'un texte à l'autre.
+          const duration = 1.6;
+          liquid.morphTo(current, duration);
+          gsap.set(out, { opacity: 0 });
+          gsap.set(inn, { opacity: 1 });
+          gsap.delayedCall(duration + PAUSE, morph);
+          return;
+        }
+        gsap
+          .timeline({
+            defaults: { duration: 1.5, ease: 'sine.inOut' },
+            onComplete: () => void gsap.delayedCall(PAUSE, morph),
+          })
+          .set(rotor, { filter: 'url(#fhero-goo)' })
+          .to(out, { opacity: 0, filter: 'blur(0.1em)' }, 0)
+          .fromTo(inn, { opacity: 0, filter: 'blur(0.1em)' }, { opacity: 1, filter: 'blur(0em)' }, 0.15)
+          .set([rotor, out, inn], { clearProps: 'filter' });
+      });
+
+      // Une fois l'entrée terminée (les lettres sont à leur place), le titre passe en liquide.
+      const startLiquid = contextSafe(() => {
+        if (cancelled) return;
         const title = root.current?.querySelector<HTMLElement>('.fhero__title');
-        if (!title) return;
-        SplitText.create(title, {
-          type: 'lines',
+        const canvas = root.current?.querySelector<HTMLCanvasElement>('.fhero__liquid');
+        const lead = root.current?.querySelector<HTMLElement>('.fhero__title-lead');
+        const ends = gsap.utils.toArray<HTMLElement>('.fhero__end', root.current);
+        if (!title || !canvas || !lead || !ends.length) return;
+        liquid = createLiquid({ title, canvas, lead, ends, index: current, onLost: stopLiquid });
+        if (liquid) title.classList.add('is-liquid');
+      });
+
+      // Le titre attend les polices : le découpage dépend de leur largeur réelle.
+      const splitTitle = contextSafe(() => {
+        const lead = root.current?.querySelector<HTMLElement>('.fhero__title-lead');
+        if (!lead) return;
+        SplitText.create(lead, {
+          type: 'lines,words',
           mask: 'lines',
           autoSplit: true,
-          onSplit: (self) => gsap.from(self.lines, { yPercent: 105, duration: 1, ease: 'expo.out', stagger: 0.08 }),
+          onSplit: (self) =>
+            gsap.from(self.words, { yPercent: 110, rotation: 6, duration: 0.7, ease: 'back.out(2)', stagger: 0.06 }),
         });
+        gsap.from('.fhero__end:first-child', {
+          yPercent: 45,
+          rotation: 3,
+          opacity: 0,
+          duration: 0.7,
+          ease: 'back.out(2)',
+          delay: 0.2,
+        });
+        // Le relais s'arrête quand l'accueil n'est plus à l'écran.
+        ScrollTrigger.create({
+          trigger: root.current,
+          start: 'top bottom',
+          end: 'bottom top',
+          onToggle: (self) => {
+            visible = self.isActive;
+          },
+        });
+        gsap.delayedCall(1.8, startLiquid);
+        gsap.delayedCall(PAUSE + 1, morph);
       });
+      document.fonts.ready.then(() => !cancelled && splitTitle());
+      return () => {
+        cancelled = true;
+        stopLiquid();
+      };
     },
     { scope: root },
   );
@@ -62,8 +157,24 @@ function Hero() {
       <div className="fhero__text">
         <p className="tag">{dict.hero.tag}</p>
         <h1 className="fhero__title">
-          <Accented text={dict.hero.title} />
+          <span className="fhero__title-lead">{dict.hero.titleLead}</span>{' '}
+          {/* Les fins sont empilées au même endroit : la plus longue réserve la place, rien ne saute. */}
+          <span className="fhero__rotor accent">
+            {dict.hero.titleEnds.map((end, i) => (
+              <span key={end} className="fhero__end" aria-hidden={i > 0 ? true : undefined}>
+                {end}
+              </span>
+            ))}
+          </span>
+          {/* Toile du titre liquide : vide et invisible tant que l'effet n'est pas lancé. */}
+          <canvas className="fhero__liquid" aria-hidden="true" />
         </h1>
+        {/* Filtre « encre » : il n'est branché que pendant le changement de texte. */}
+        <svg className="fhero__goo" width="0" height="0" aria-hidden="true" focusable="false">
+          <filter id="fhero-goo" x="-10%" y="-25%" width="120%" height="150%" colorInterpolationFilters="sRGB">
+            <feColorMatrix type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -7" />
+          </filter>
+        </svg>
         <p className="fhero__lead">{dict.hero.lead}</p>
         <div className="fhero__cta">
           {hasWa ? (

@@ -565,3 +565,25 @@ dialog.sheet[open]::backdrop {
   color: var(--ink-2);
   font-size: 0.92rem;
 }
+
+/* ---------- Curseur personnalisé (ordinateur avec souris, animations autorisées) ---------- */
+/* Une petite toile qui suit la souris ; la goutte y est dessinée par le composant Cursor. */
+/* Sans lui (mobile, version calme, pas de WebGL), le curseur du système reste en place. */
+.cursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 200;
+  width: 300px;
+  height: 300px;
+  max-width: none;
+  pointer-events: none;
+  will-change: transform;
+}
+.has-cursor,
+.has-cursor * {
+  cursor: none !important;
+}
+.has-cursor :is(input, textarea, select, option) {
+  cursor: auto !important;
+}

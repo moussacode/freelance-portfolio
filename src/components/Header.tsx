@@ -100,7 +100,7 @@ export function Header() {
 
   const links = [
     { id: 'services', label: dict.nav.services },
-    { id: 'realisations', label: dict.nav.works },
+    // { id: 'realisations', label: dict.nav.works },
     { id: 'methode', label: dict.nav.method },
     { id: 'questions', label: dict.nav.faq },
   ];

@@ -6,6 +6,7 @@ import { AppProvider, useApp } from './AppContext';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { StickyCta } from './StickyCta';
+import { Cursor } from './Cursor';
 
 export function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
   return (
@@ -28,6 +29,7 @@ function Frame({ children }: { children: ReactNode }) {
       </main>
       <Footer />
       <StickyCta />
+      <Cursor />
     </>
   );
 }

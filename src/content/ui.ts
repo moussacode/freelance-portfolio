@@ -22,7 +22,10 @@ const fr = {
   nav: { services: 'Services', works: 'Réalisations', method: 'Méthode', faq: 'Questions', quote: 'Demander un devis' },
   hero: {
     tag: 'Développeur web freelance à Dakar',
-    title: 'Un site qui vous [ramène des clients].',
+    // Le titre a un début fixe et plusieurs fins (en teal) qui se relaient.
+    // La première fin est celle qui s'affiche sans JavaScript.
+    titleLead: 'Un site qui vous',
+    titleEnds: ['ramène des clients.', 'fait vendre en ligne.', 'fait gagner du temps.', 'ressemble.'],
     lead: 'Je conçois et développe votre site vitrine, votre boutique en ligne ou votre application, de la maquette à la mise en ligne.',
     primary: 'Discuter sur WhatsApp',
     primaryNoWa: 'Demander un devis',
@@ -103,7 +106,8 @@ const en: Dict = {
   nav: { services: 'Services', works: 'Work', method: 'Process', faq: 'Questions', quote: 'Request a quote' },
   hero: {
     tag: 'Freelance web developer in Dakar',
-    title: 'A website that [brings you clients].',
+    titleLead: 'A website that',
+    titleEnds: ['brings you clients.', 'sells for you online.', 'saves you time.', 'looks like you.'],
     lead: 'I design and build your business website, online shop or application, from the mockup to launch.',
     primary: 'Chat on WhatsApp',
     primaryNoWa: 'Request a quote',

@@ -102,6 +102,52 @@
   letter-spacing: -0.025em;
   max-width: 11em;
 }
+.fhero__title-lead {
+  display: block;
+}
+/* Les fins du titre partagent la même case : la plus longue fixe la taille, une seule est visible. */
+.fhero__rotor {
+  display: grid;
+}
+.fhero__end {
+  grid-area: 1 / 1;
+}
+.fhero__end:not(:first-child) {
+  opacity: 0;
+}
+.fhero__goo {
+  position: absolute;
+}
+/* Titre liquide : la toile recouvre le titre, le vrai texte reste dessous, devenu transparent. */
+.fhero__title {
+  position: relative;
+}
+.fhero__liquid {
+  position: absolute;
+  width: 0;
+  height: 0;
+  /* La toile dépasse du titre : sans ceci, la règle générale max-width: 100% l'écrase et décale les lettres. */
+  max-width: none;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.fhero__title.is-liquid .fhero__liquid {
+  opacity: 1;
+}
+.fhero__title-lead,
+.fhero__rotor {
+  transition: color 0.5s;
+}
+.fhero__title.is-liquid .fhero__title-lead,
+.fhero__title.is-liquid .fhero__rotor {
+  color: transparent;
+}
+/* Le texte transparent ne doit pas réapparaître en surbrillance quand on glisse la souris dessus. */
+.fhero__title.is-liquid {
+  -webkit-user-select: none;
+  user-select: none;
+}
 .fhero__lead {
   margin-top: clamp(16px, 2.4vh, 26px);
   max-width: 40ch;
