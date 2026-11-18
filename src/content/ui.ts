@@ -3,9 +3,8 @@ import type { Locale } from './i18n';
 /** Textes de l'interface. Dans un titre, les crochets marquent le passage en teal : « Parlons de [votre projet] ». */
 const fr = {
   meta: {
-    title: 'MoussaCode, création de sites web et d’applications à Dakar',
-    description:
-      'Moussa Ali Mchangama, développeur web freelance et UI/UX designer à Dakar : sites vitrines, boutiques en ligne, applications sur mesure, audits. De la maquette à la mise en ligne.',
+    title: 'MoussaCode — Designer UI/UX & Développeur',
+    description: 'Designer UI/UX et développeur web & mobile. Des sites et des apps qu’on a envie d’utiliser.',
   },
   a11y: {
     skip: 'Aller au contenu',
@@ -87,9 +86,8 @@ export type Dict = typeof fr;
 
 const en: Dict = {
   meta: {
-    title: 'MoussaCode, websites and applications built in Dakar',
-    description:
-      'Moussa Ali Mchangama, freelance web developer and UI/UX designer in Dakar: business websites, online shops, custom applications, audits. From mockup to launch.',
+    title: 'MoussaCode — UI/UX Designer & Developer',
+    description: 'UI/UX designer and web & mobile developer. Websites and apps people want to use.',
   },
   a11y: {
     skip: 'Skip to content',

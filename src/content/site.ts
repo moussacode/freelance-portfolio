@@ -16,9 +16,9 @@ export const person = {
   github: 'https://github.com/moussacode',
   linkedin: 'https://www.linkedin.com/in/ali-mchangama-moussa/',
   /** Adresse du site freelance une fois en ligne (sert au référencement). */
-  site: 'https://moussacode.vercel.app',
+  site: 'https://moussacode.dev',
   /** Portfolio détaillé, pour le lien « Voir tous mes projets ». */
-  portfolio: 'https://moussacode.vercel.app',
+  portfolio: 'https://moussacode.dev',
   /** Point vert « disponible » dans la barre. */
   available: true,
 };

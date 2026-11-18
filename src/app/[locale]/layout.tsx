@@ -34,7 +34,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const dict = getDict(locale);
   return {
     metadataBase: new URL(person.site),
-    title: { default: dict.meta.title, template: `%s · ${person.handle}` },
+    title: { default: dict.meta.title, template: `%s | ${person.handle}` },
     description: dict.meta.description,
     authors: [{ name: person.name, url: person.site }],
     alternates: {
@@ -48,6 +48,14 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       description: dict.meta.description,
       url: `/${locale}`,
       locale: locale === 'en' ? 'en_US' : 'fr_FR',
+      // Fichier src/app/opengraph-image.png. À déclarer ici : ce bloc openGraph remplace celui hérité de app/.
+      images: [{ url: '/opengraph-image.png', width: 1200, height: 630, alt: dict.meta.title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: dict.meta.title,
+      description: dict.meta.description,
+      images: [{ url: '/twitter-image.png', width: 1200, height: 630, alt: dict.meta.title }],
     },
   };
 }
