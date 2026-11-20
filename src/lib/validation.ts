@@ -11,13 +11,14 @@ z.config(z.locales.fr());
 export const coverIds = ['jappo', 'eco', 'teranga', 'smart', 'shop'] as const;
 
 /** Texte obligatoire, espaces retirés. */
-const req = (max: number) => z.string().trim().min(1).max(max);
+const tooLong = (max: number) => `${max} caractères maximum.`;
+const req = (max: number) => z.string().trim().min(1, 'Champ obligatoire.').max(max, tooLong(max));
 /** Texte facultatif : une chaîne vide devient null (= à traduire). */
 const opt = (max: number) =>
   z
     .string()
     .trim()
-    .max(max)
+    .max(max, tooLong(max))
     .nullish()
     .transform((v) => (v ? v : null));
 
@@ -46,7 +47,7 @@ export const httpsUrl = z
 export const imagePathSchema = z.string().regex(/^[a-z0-9-]+\.(png|jpg|webp)$/, 'Nom de fichier invalide.');
 
 /** Un point « Ce que vous recevez » : 1 à 120 caractères. */
-const point = z.string().trim().min(1).max(120);
+const point = z.string().trim().min(1, 'Point obligatoire.').max(120, tooLong(120));
 
 export const serviceSchema = z.object({
   slug: slugSchema,

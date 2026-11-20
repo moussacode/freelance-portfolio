@@ -362,3 +362,165 @@
 .adm-compare__new {
   font-weight: 700;
 }
+
+/* ---------- Listes réordonnables (services, questions) ---------- */
+.adm-list-help {
+  margin-bottom: 14px;
+}
+.adm-list {
+  display: grid;
+  gap: 10px;
+  max-width: 980px;
+}
+.adm-sortable {
+  position: relative;
+  list-style: none;
+}
+.adm-sortable[data-dragging] {
+  z-index: 5;
+}
+.adm-sortable[data-dragging] .adm-item {
+  border-color: var(--brand);
+}
+.adm-item {
+  display: flex;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 10px 12px 10px 6px;
+  border-radius: 20px;
+}
+.adm-item[data-hidden] .adm-item__title {
+  color: var(--ink-2);
+}
+.adm-item[data-highlight] {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand) 25%, transparent);
+}
+.adm-handle {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 44px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--ink-2);
+  cursor: grab;
+  touch-action: none;
+}
+.adm-handle:hover {
+  background: var(--bg);
+  color: var(--ink);
+}
+.adm-sortable[data-dragging] .adm-handle {
+  cursor: grabbing;
+}
+.adm-item__main {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+.adm-item__title {
+  justify-self: start;
+  max-width: 100%;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: 700 1rem / 1.3 var(--font-body);
+  text-align: left;
+  cursor: pointer;
+}
+.adm-item__title:hover {
+  text-decoration: underline;
+}
+.adm-item__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.adm-item__meta:empty {
+  display: none;
+}
+.adm-chip {
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: var(--tag-bg);
+  color: var(--tag-ink);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.adm-chip--soft {
+  background: var(--bg);
+  color: var(--ink-2);
+  border: 1px solid var(--line);
+}
+.adm-item__visible {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.88rem;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+.adm-item__actions {
+  display: flex;
+  gap: 6px;
+}
+.adm-item__actions .adm-icon-btn {
+  border-color: transparent;
+  background: transparent;
+}
+.adm-item__actions .adm-icon-btn:hover {
+  border-color: var(--line);
+  background: var(--bg);
+}
+@media (max-width: 699px) {
+  .adm-item {
+    flex-wrap: wrap;
+  }
+  .adm-item__main {
+    flex-basis: calc(100% - 48px);
+  }
+  .adm-item__visible {
+    margin-left: 42px;
+    flex: 1;
+  }
+}
+
+/* ---------- Panneau d'édition ---------- */
+.adm-panel-form {
+  display: grid;
+  gap: 18px;
+}
+.adm-fieldset {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.adm-fieldset legend {
+  margin-bottom: 4px;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+.adm-preview {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px dashed var(--line);
+  border-radius: 22px;
+  background: var(--bg);
+}
+.adm-preview .label {
+  margin: 0;
+}
+/* L'aperçu reprend la carte du site, sans son ombre. */
+.adm-preview .card {
+  box-shadow: none;
+}
