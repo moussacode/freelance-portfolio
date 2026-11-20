@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
-import localFont from 'next/font/local';
 import { notFound } from 'next/navigation';
 import { Shell } from '@/components/Shell';
 import { htmlLang, isLocale, locales } from '@/content/i18n';
@@ -8,21 +7,8 @@ import { getDict } from '@/content/ui';
 import { person } from '@/content/site';
 import { bootScript } from '@/lib/boot';
 import { getSiteContent } from '@/lib/content';
+import { bricolage, inter } from '../fonts';
 import '../globals.css';
-
-// Polices du design system « Studio clair » : Bricolage Grotesque pour les titres, Inter pour le texte.
-const bricolage = localFont({
-  src: '../../fonts/Bricolage-latin.woff2',
-  variable: '--font-bricolage',
-  weight: '200 800',
-  display: 'swap',
-});
-const inter = localFont({
-  src: '../../fonts/Inter-latin.woff2',
-  variable: '--font-inter',
-  weight: '100 900',
-  display: 'swap',
-});
 
 // ISR : voir page.tsx. Valeur littérale exigée par Next (= CONTENT_REVALIDATE).
 export const revalidate = 3600;
