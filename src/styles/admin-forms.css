@@ -679,6 +679,193 @@
   height: 100%;
 }
 
+/* ---------- Vue d'ensemble ---------- */
+.adm-overview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+@media (min-width: 900px) {
+  .adm-overview {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+/* Grand écran : la carte « En ligne » et les quatre compteurs sur une seule ligne. */
+@media (min-width: 1280px) {
+  .adm-overview {
+    grid-template-columns: minmax(0, 2fr) repeat(4, minmax(0, 1fr));
+  }
+  .adm-overview .adm-online {
+    grid-column: auto;
+  }
+}
+/* Carte « En ligne » : la seule carte teal de l'écran. */
+.adm-online {
+  grid-column: 1 / -1;
+  display: grid;
+  align-content: center;
+  gap: 6px;
+  min-height: 132px;
+  padding: 22px 24px;
+  border-radius: var(--radius-card);
+  background: var(--brand);
+  /* Couleur du fond du thème : crème sur teal foncé (clair), encre sur teal clair (sombre). Contraste AA. */
+  color: var(--bg);
+  text-decoration: none;
+}
+.adm-online__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.adm-online__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.adm-online__domain {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  letter-spacing: -0.02em;
+}
+.adm-online__meta {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+.adm-online:hover .adm-online__domain {
+  text-decoration: underline;
+}
+.adm-stat {
+  display: grid;
+  gap: 6px;
+  padding: 18px 20px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.adm-stat:hover {
+  border-color: var(--brand);
+}
+.adm-stat__label {
+  font-size: 0.9rem;
+  color: var(--ink-2);
+}
+.adm-stat__value {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+}
+.adm-stat__total {
+  font-size: 1.2rem;
+  color: var(--ink-2);
+}
+.adm-stat__meta {
+  font-size: 0.85rem;
+  color: var(--ink-2);
+}
+.adm-overview-cols {
+  display: grid;
+  gap: 20px;
+  align-items: start;
+  margin-bottom: 20px;
+}
+@media (min-width: 1100px) {
+  .adm-overview-cols {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  }
+}
+.adm-todo,
+.adm-changes {
+  display: grid;
+}
+.adm-todo li,
+.adm-changes li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.adm-todo__text,
+.adm-changes a {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+.adm-todo__text span,
+.adm-changes a span {
+  font-size: 0.85rem;
+  color: var(--ink-2);
+}
+.adm-todo__text strong,
+.adm-changes strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* Type de l'élément : pastille sur grand écran, texte dans la ligne sur mobile. */
+.adm-todo__kind {
+  display: none;
+}
+@media (max-width: 599px) {
+  .adm-todo .adm-chip {
+    display: none;
+  }
+  .adm-todo__kind {
+    display: inline;
+  }
+  .adm-todo__text strong {
+    white-space: normal;
+  }
+}
+.adm-todo__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  color: var(--brand);
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.adm-todo__go svg.lucide {
+  width: 16px;
+  height: 16px;
+}
+.adm-changes a {
+  min-height: 44px;
+  align-content: center;
+  color: var(--ink);
+  text-decoration: none;
+}
+.adm-changes a:hover strong {
+  text-decoration: underline;
+}
+.adm-changes time {
+  font-size: 0.85rem;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+.adm-visits > div {
+  display: grid;
+  gap: 4px;
+}
+.adm-visits {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
 /* ---------- Rappel, case à cocher ---------- */
 .adm-note {
   padding: 10px 14px;
