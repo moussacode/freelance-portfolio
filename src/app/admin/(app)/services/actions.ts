@@ -4,6 +4,7 @@ import { revalidatePath, updateTag } from 'next/cache';
 import { z } from 'zod';
 import { requireAdmin } from '@/lib/auth';
 import { CONTENT_TAG } from '@/lib/cache-tags';
+import { checkCompleteList } from '@/lib/list-guard';
 import { serviceSchema } from '@/lib/validation';
 import type { SaveListResult } from '@/components/admin/CollectionEditor';
 import { SERVICE_COLUMNS, serviceFromRow, serviceToInput, type ServiceDraft, type ServiceRow } from './shared';
@@ -21,6 +22,15 @@ export async function saveServices(items: ServiceDraft[], deleted: string[]): Pr
 
   const slugs = parsed.data.items.map((i) => i.slug);
   if (new Set(slugs).size !== slugs.length) return { ok: false, error: 'Deux services ont la même adresse.' };
+
+  // La liste doit être complète : les positions sont recalculées pour tous les éléments.
+  const incomplete = await checkCompleteList(
+    supabase,
+    'freelance_services',
+    parsed.data.items.map((i) => i.id),
+    parsed.data.deleted,
+  );
+  if (incomplete) return { ok: false, error: incomplete };
 
   const { error } = await supabase.rpc('freelance_save_services', {
     items: parsed.data.items,
