@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { requireAdmin } from '@/lib/auth';
 import { person } from '@/content/site';
+import { Suspense } from 'react';
 import { Overview, type Change, type Todo } from './Overview';
+import { VisitsCard } from './VisitsCard';
 
 export const metadata: Metadata = { title: 'Vue d’ensemble' };
 
@@ -88,6 +90,18 @@ export default async function AdminHome() {
       stats={stats}
       todos={todos}
       changes={changes.slice(0, 5).map((c) => ({ ...c, when: relative(c.at, now) }))}
+      visits={
+        <Suspense
+          fallback={
+            <section className="adm-panel card adm-visits" aria-busy="true" aria-label="Visites : chargement">
+              <span className="adm-skel adm-skel--line" style={{ width: 160 }} />
+              <span className="adm-skel adm-skel--card" />
+            </section>
+          }
+        >
+          <VisitsCard />
+        </Suspense>
+      }
     />
   );
 }

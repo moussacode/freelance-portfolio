@@ -1,5 +1,6 @@
+import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { ArrowRight, ExternalLink } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { NewButton, PageHeader } from '@/components/admin/PageHeader';
 import { EmptyState } from '@/components/admin/EmptyState';
 
@@ -15,6 +16,7 @@ export function Overview({
   stats,
   todos,
   changes,
+  visits,
 }: {
   firstName: string;
   domain: string;
@@ -22,6 +24,8 @@ export function Overview({
   stats: Stat[];
   todos: Todo[];
   changes: (Change & { when: string })[];
+  /** Carte « Visites », chargée à part (Suspense) : elle ne retarde pas le reste de la page. */
+  visits: ReactNode;
 }) {
   return (
     <>
@@ -122,18 +126,7 @@ export function Overview({
         </section>
       </div>
 
-      <section className="adm-panel card adm-visits" aria-labelledby="visits-title">
-        <div>
-          <h2 id="visits-title" className="adm-subtitle">
-            Vos visites
-          </h2>
-          <p className="adm-muted">Visiteurs, pages vues et provenance sont dans Vercel Analytics. Aucun suivi n’est fait par le site lui-même.</p>
-        </div>
-        <a className="btn" href="https://vercel.com/moussas-projects-40f2cb06/moussaalimchangama/analytics?environment=all" target="_blank" rel="noopener noreferrer">
-          Ouvrir les statistiques <ExternalLink aria-hidden="true" />
-          <span className="sr"> (nouvel onglet)</span>
-        </a>
-      </section>
+      {visits}
     </>
   );
 }
