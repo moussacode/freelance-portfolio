@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "seed": "node --env-file=.env --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/seed.ts",
+    "typecheck:scripts": "tsc -p scripts"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
