@@ -7,6 +7,7 @@ import { htmlLang, isLocale, locales } from '@/content/i18n';
 import { getDict } from '@/content/ui';
 import { person } from '@/content/site';
 import { bootScript } from '@/lib/boot';
+import { getSiteContent } from '@/lib/content';
 import '../globals.css';
 
 // Polices du design system « Studio clair » : Bricolage Grotesque pour les titres, Inter pour le texte.
@@ -23,6 +24,8 @@ const inter = localFont({
   display: 'swap',
 });
 
+// ISR : voir page.tsx. Valeur littérale exigée par Next (= CONTENT_REVALIDATE).
+export const revalidate = 3600;
 export const dynamicParams = false;
 export const generateStaticParams = () => locales.map((locale) => ({ locale }));
 
@@ -75,6 +78,8 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   if (!isLocale(locale)) notFound();
 
   const dict = getDict(locale);
+  const content = await getSiteContent();
+  const { email, socials } = content.settings;
   // Données structurées : un prestataire de services, pour le référencement local.
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -82,11 +87,11 @@ export default async function LocaleLayout({ children, params }: { children: Rea
     name: person.handle,
     description: dict.meta.description,
     url: person.site,
-    email: person.email,
+    email: email ?? undefined,
     founder: { '@type': 'Person', name: person.name },
     address: { '@type': 'PostalAddress', addressLocality: 'Dakar', addressCountry: 'SN' },
     areaServed: 'SN',
-    sameAs: [person.github, person.linkedin],
+    sameAs: [socials.github, socials.linkedin, socials.instagram, socials.tiktok].filter(Boolean),
   };
 
 
@@ -97,7 +102,9 @@ export default async function LocaleLayout({ children, params }: { children: Rea
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
       <body>
-        <Shell locale={locale}>{children}</Shell>
+        <Shell locale={locale} content={content}>
+          {children}
+        </Shell>
       </body>
     </html>
   );

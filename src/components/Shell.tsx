@@ -2,16 +2,20 @@
 
 import type { ReactNode } from 'react';
 import type { Locale } from '@/content/i18n';
+import type { SiteContent } from '@/content/model';
+import { ContentProvider } from './ContentContext';
 import { AppProvider, useApp } from './AppContext';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { StickyCta } from './StickyCta';
 import { Cursor } from './Cursor';
 
-export function Shell({ locale, children }: { locale: Locale; children: ReactNode }) {
+export function Shell({ locale, content, children }: { locale: Locale; content: SiteContent; children: ReactNode }) {
   return (
     <AppProvider locale={locale}>
-      <Frame>{children}</Frame>
+      <ContentProvider content={content}>
+        <Frame>{children}</Frame>
+      </ContentProvider>
     </AppProvider>
   );
 }

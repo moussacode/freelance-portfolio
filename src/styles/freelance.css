@@ -366,6 +366,10 @@
   border-radius: var(--radius-card);
   overflow: hidden;
 }
+/* Image importée depuis l'admin, à la place de l'affiche dessinée. */
+.work__img {
+  object-fit: cover;
+}
 .work__name {
   font-size: clamp(1.5rem, 2.2vw, 2rem);
   letter-spacing: -0.02em;

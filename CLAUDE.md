@@ -10,7 +10,9 @@ Next.js App Router, TypeScript strict, GSAP. Pas de Tailwind, pas de Three.js : 
 - Chaque section doit mener à une action de contact (WhatsApp, devis, e-mail). Pas de section décorative.
 - Accessibilité : focus visible, cibles de 44 px minimum, champs avec libellé, contraste AA dans les deux thèmes.
 - Pas de nom de client, pas d'avis ni de chiffre inventé, pas de prix sans l'accord de Moussa.
-- Tout le contenu est dans `src/content/site.ts` et `src/content/ui.ts` (fr, en).
+- Textes d'interface : `src/content/ui.ts` (fr, en). Contenu fixe (identité, raisons, méthode) : `src/content/site.ts`.
+- Contenu modifiable (services, réalisations, questions, avis, réglages de contact) : Supabase, tables `freelance_*`,
+  lu par `src/lib/content.ts`, avec `src/content/fallback.ts` en repli. Liens WhatsApp et e-mail : `src/lib/contact.ts` uniquement.
 
 ## Identité : design system « Studio clair » (le même que les carousels de Moussa)
 - Couleurs : fond #F5F2EC, encre #0B1F2A, teal #006989, ambre #FFB400, texte secondaire #5B6B73, carte #FFFFFF,
