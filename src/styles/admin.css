@@ -3,6 +3,12 @@
   Pas d'ombre lourde, pas de dégradé. Le rouge d'erreur ne sert qu'au badge d'erreur.
 */
 
+/* Cartes de l'admin : bordure fine à la place de l'ombre (le site garde ses cartes flottantes). */
+.adm .card {
+  box-shadow: none;
+  border: 1px solid var(--line);
+}
+
 /* ---------- Écrans centrés (connexion, page provisoire) ---------- */
 .adm-center {
   min-height: 100dvh;

@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+// Messages d'erreur de zod en français (serveur et navigateur).
+z.config(z.locales.fr());
+
 /**
  * Schémas zod partagés, alignés sur les contraintes de supabase/freelance-admin.sql.
  * Le serveur revalide toujours avec ces schémas : la validation côté client n'est qu'un confort.
@@ -100,9 +103,17 @@ export const testimonialSchema = z
   });
 
 const message = z.object({ fr: req(500), en: req(500) });
+/** Lien vers un réseau : vide = pas de lien (la clé disparaît). */
+const social = z
+  .union([z.literal('').transform(() => undefined), httpsUrl])
+  .optional();
 
 export const settingsSchema = z.object({
-  email: z.email().max(120).nullish().transform((v) => v ?? null),
+  // Vide = pas d'adresse : les liens e-mail disparaissent du site.
+  email: z
+    .union([z.literal('').transform(() => null), z.email('Adresse e-mail invalide.').max(120)])
+    .nullish()
+    .transform((v) => v ?? null),
   whatsapp_number: z
     .string()
     .regex(/^[0-9]{8,15}$/, 'Chiffres seuls, avec l’indicatif (8 à 15 chiffres).')
@@ -111,21 +122,30 @@ export const settingsSchema = z.object({
     .transform((v) => v || null),
   whatsapp_messages: z.object({
     contact: message,
-    quote: message.refine((m) => m.fr.includes('{service}') && m.en.includes('{service}'), {
-      message: 'Le message de devis doit contenir {service}.',
+    // {service} obligatoire dans chaque langue ; l'erreur est rattachée à la langue concernée.
+    quote: message.superRefine((m, ctx) => {
+      for (const lang of ['fr', 'en'] as const) {
+        if (!m[lang].includes('{service}')) {
+          ctx.addIssue({ code: 'custom', path: [lang], message: 'Le message de devis doit contenir {service}.' });
+        }
+      }
     }),
     brief: message,
   }),
   is_available: z.boolean(),
   socials: z.object({
-    linkedin: httpsUrl.optional(),
-    github: httpsUrl.optional(),
-    instagram: httpsUrl.optional(),
-    tiktok: httpsUrl.optional(),
+    linkedin: social,
+    github: social,
+    instagram: social,
+    tiktok: social,
   }),
   photo_path: imagePathSchema.nullish().transform((v) => v ?? null),
 });
 
+/** Formulaire des Réglages : tout sauf la photo, qui a sa propre action d'envoi. */
+export const settingsFormSchema = settingsSchema.omit({ photo_path: true });
+
+export type SettingsFormInput = z.input<typeof settingsFormSchema>;
 export type ServiceInput = z.infer<typeof serviceSchema>;
 export type WorkInput = z.infer<typeof workSchema>;
 export type FaqInput = z.infer<typeof faqSchema>;

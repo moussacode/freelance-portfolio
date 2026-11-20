@@ -5,6 +5,7 @@ import { bricolage, inter } from '../fonts';
 import '../globals.css';
 import '../../styles/admin.css';
 import '../../styles/admin-shell.css';
+import '../../styles/admin-forms.css';
 
 // Mise en page racine de l'admin : mêmes polices, jetons et thème que le site, mais hors de [locale].
 // L'admin est en français seulement, jamais indexé, jamais mis en cache.

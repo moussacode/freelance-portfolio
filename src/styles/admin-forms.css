@@ -1,0 +1,266 @@
+/*
+  Formulaires de l'admin : panneaux, champs, interrupteur, langues, indicateur d'enregistrement.
+  Les champs réutilisent .field du site (freelance.css).
+*/
+
+/* ---------- Mise en page des Réglages ---------- */
+.adm-settings {
+  display: grid;
+  gap: 20px;
+  align-items: start;
+}
+@media (min-width: 1100px) {
+  .adm-settings {
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+  }
+}
+.adm-stack {
+  display: grid;
+  gap: 20px;
+}
+.adm-panel {
+  display: grid;
+  gap: 18px;
+  padding: clamp(20px, 3vw, 28px);
+}
+.adm-panel__head h2 {
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.adm-panel__head p {
+  margin-top: 4px;
+}
+.adm-subtitle {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+}
+.adm-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+.adm-help {
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.adm-small {
+  font-size: 0.85rem;
+}
+.adm-error--inline {
+  display: inline-flex;
+  color: var(--ink);
+  font-weight: 600;
+}
+.adm-error--inline .adm-error__badge {
+  margin-top: 0.35em;
+}
+.field input[aria-invalid='true'],
+.field textarea[aria-invalid='true'],
+.adm-msg__text[aria-invalid='true'] {
+  border-color: var(--error);
+}
+.adm-field--inline {
+  grid-template-columns: 96px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 12px;
+}
+.adm-field--inline .adm-help {
+  grid-column: 2;
+}
+.adm-field--inline .adm-help:empty {
+  display: none;
+}
+
+/* ---------- Messages WhatsApp ---------- */
+.adm-msg {
+  display: grid;
+  gap: 8px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+}
+.adm-msg:focus-within {
+  border-color: var(--brand);
+}
+.adm-msg .label {
+  margin: 0;
+}
+.adm-msg__text {
+  width: 100%;
+  min-height: 72px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: inherit;
+  line-height: 1.5;
+  resize: vertical;
+}
+.adm-msg__text:focus {
+  outline: none;
+}
+.adm-test {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 4px;
+  color: var(--brand);
+  font-weight: 700;
+  text-decoration: none;
+}
+.adm-test:hover {
+  text-decoration: underline;
+}
+.adm-test svg.lucide {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---------- Langues (FR / EN) ---------- */
+.adm-langs {
+  display: inline-flex;
+  gap: 6px;
+}
+.adm-langs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 44px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg-raise);
+  color: var(--ink);
+  font: 600 0.82rem / 1 var(--font-body);
+  cursor: pointer;
+}
+.adm-langs button[aria-pressed='true'] {
+  background: var(--tag-bg);
+  border-color: var(--tag-bg);
+  color: var(--tag-ink);
+}
+.adm-langs__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand);
+}
+
+/* ---------- Photo ---------- */
+.adm-photo {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.adm-photo img {
+  flex: none;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--line);
+}
+.adm-photo__actions {
+  display: grid;
+  justify-items: start;
+  gap: 6px;
+}
+.btn--small svg.lucide {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---------- Interrupteur ---------- */
+.adm-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: var(--bg);
+}
+.adm-toggle__title {
+  font-weight: 600;
+}
+.adm-switch {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 56px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.adm-switch__track {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  border-radius: 999px;
+  background: var(--ink-2);
+  transition: background-color 0.2s;
+}
+.adm-switch__thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.2s var(--ease);
+}
+.adm-switch[aria-checked='true'] .adm-switch__track {
+  background: var(--brand);
+}
+.adm-switch[aria-checked='true'] .adm-switch__thumb {
+  transform: translateX(18px);
+}
+.adm-switch:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ---------- Indicateur d'enregistrement ---------- */
+.adm-save {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.adm-save__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--bg-raise);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.adm-save__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--brand);
+}
+.adm-save[data-status='pending'] .adm-save__dot,
+.adm-save[data-status='saving'] .adm-save__dot {
+  background: var(--ink-2);
+}
+.adm-save[data-status='invalid'] .adm-save__dot,
+.adm-save[data-status='error'] .adm-save__dot {
+  background: var(--error);
+}
