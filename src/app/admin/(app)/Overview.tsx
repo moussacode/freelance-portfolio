@@ -129,7 +129,7 @@ export function Overview({
           </h2>
           <p className="adm-muted">Visiteurs, pages vues et provenance sont dans Vercel Analytics. Aucun suivi n’est fait par le site lui-même.</p>
         </div>
-        <a className="btn" href="https://vercel.com/dashboard" target="_blank" rel="noopener noreferrer">
+        <a className="btn" href="https://vercel.com/moussas-projects-40f2cb06/moussaalimchangama/analytics?environment=all" target="_blank" rel="noopener noreferrer">
           Ouvrir les statistiques <ExternalLink aria-hidden="true" />
           <span className="sr"> (nouvel onglet)</span>
         </a>

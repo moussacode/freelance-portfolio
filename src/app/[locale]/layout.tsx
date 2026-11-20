@@ -7,6 +7,7 @@ import { getDict } from '@/content/ui';
 import { person } from '@/content/site';
 import { bootScript } from '@/lib/boot';
 import { getSiteContent } from '@/lib/content';
+import { Analytics } from '@vercel/analytics/next';
 import { bricolage, inter } from '../fonts';
 import '../globals.css';
 
@@ -85,12 +86,15 @@ export default async function LocaleLayout({ children, params }: { children: Rea
     <html lang={htmlLang[locale]} className={`${bricolage.variable} ${inter.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        {/* « < » échappé : une valeur venue de la base ne peut pas fermer la balise et injecter un script. */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
       </head>
       <body>
         <Shell locale={locale} content={content}>
           {children}
         </Shell>
+        {/* Vercel Web Analytics : pages vues anonymes, sans cookie. Pas de suivi maison. */}
+        <Analytics />
       </body>
     </html>
   );

@@ -152,7 +152,8 @@ function toSettings(row: z.infer<typeof settingsRow>): Settings {
     // Un message pas encore réglé reprend le texte par défaut.
     messages: { contact: m.contact ?? fb.contact, quote: m.quote ?? fb.quote, brief: m.brief ?? fb.brief },
     available: row.is_available,
-    socials: row.socials,
+    // Seuls les liens https:// sont gardés (jamais javascript: ni data:), même si la base a été modifiée ailleurs.
+    socials: Object.fromEntries(Object.entries(row.socials).filter(([, v]) => typeof v === 'string' && /^https:\/\/[^\s<>"]+$/.test(v))),
     avatar: row.photo_path ? imageUrl(row.photo_path) : fallbackContent.settings.avatar,
   };
 }

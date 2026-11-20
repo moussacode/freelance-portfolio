@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
+import { headers } from 'next/headers';
 import { bootScript } from '@/lib/boot';
 import { bricolage, inter } from '../fonts';
 import '../globals.css';
@@ -28,12 +29,14 @@ export const dynamic = 'force-dynamic';
 /** Barre latérale repliée ou non : posé avant le premier affichage, pour éviter un saut. */
 const sidebarScript = `try{if(localStorage.getItem('mc-admin-sidebar')==='collapsed')document.documentElement.dataset.sidebar='collapsed'}catch(e){}`;
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default async function AdminLayout({ children }: { children: ReactNode }) {
+  // Nonce de la CSP, posé par proxy.ts : nos deux scripts en ligne doivent le porter.
+  const nonce = (await headers()).get('x-nonce') ?? undefined;
   return (
     <html lang="fr" className={`${bricolage.variable} ${inter.variable}`} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: bootScript }} />
-        <script dangerouslySetInnerHTML={{ __html: sidebarScript }} />
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: bootScript }} />
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: sidebarScript }} />
       </head>
       <body className="adm">{children}</body>
     </html>
