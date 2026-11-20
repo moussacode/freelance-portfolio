@@ -524,3 +524,187 @@
 .adm-preview .card {
   box-shadow: none;
 }
+
+/* ---------- Onglets Tous / Visibles / Masqués ---------- */
+.adm-tabs {
+  display: inline-flex;
+  gap: 4px;
+  margin-bottom: 12px;
+  padding: 4px;
+  border-radius: 14px;
+  background: var(--bg-raise);
+  border: 1px solid var(--line);
+}
+.adm-tabs button {
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--ink-2);
+  font: 600 0.92rem / 1 var(--font-body);
+  cursor: pointer;
+}
+.adm-tabs button[aria-pressed='true'] {
+  background: var(--bg);
+  color: var(--ink);
+}
+.adm-tabs__n {
+  margin-left: 4px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+
+/* ---------- Grille de cartes (réalisations) ---------- */
+.adm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.adm-item--card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    'cover cover'
+    'handle main'
+    'visible visible'
+    'actions actions';
+  align-items: start;
+  gap: 10px 6px;
+  padding: 0 14px 14px 6px;
+  overflow: hidden;
+}
+.adm-item--card .adm-item__cover {
+  grid-area: cover;
+  margin: 0 -14px 4px -6px;
+  aspect-ratio: 16 / 10;
+  background: var(--bg);
+  overflow: hidden;
+}
+.adm-item--card .adm-item__cover img,
+.adm-item--card .adm-item__cover svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.adm-item--card .adm-handle {
+  grid-area: handle;
+}
+.adm-item--card .adm-item__main {
+  grid-area: main;
+  padding-top: 6px;
+}
+.adm-item--card .adm-item__visible {
+  grid-area: visible;
+  justify-content: space-between;
+  margin-left: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+}
+.adm-item--card .adm-item__actions {
+  grid-area: actions;
+  justify-content: flex-end;
+}
+.adm-item[data-hidden] .adm-item__cover {
+  opacity: 0.55;
+}
+.adm-icon-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+/* ---------- Choix d'image et d'affiche ---------- */
+.adm-picker {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1.5px dashed var(--line);
+  border-radius: 20px;
+  background: var(--bg);
+  text-align: center;
+  transition: border-color 0.2s;
+}
+.adm-picker[data-over] {
+  border-color: var(--brand);
+}
+.adm-picker__img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 14px;
+}
+.adm-picker__text {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  font-size: 0.88rem;
+  color: var(--ink-2);
+}
+.adm-picker__text strong {
+  color: var(--ink);
+}
+.adm-picker__text svg {
+  color: var(--brand);
+}
+.adm-covers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(76px, 1fr));
+  gap: 8px;
+}
+.adm-cover-opt {
+  display: grid;
+  gap: 6px;
+  padding: 6px;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  background: var(--bg-raise);
+  color: var(--ink);
+  font: 600 0.75rem / 1.2 var(--font-body);
+  cursor: pointer;
+}
+.adm-cover-opt[aria-checked='true'] {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 2px var(--brand);
+}
+.adm-cover-opt__img {
+  display: block;
+  aspect-ratio: 4 / 5;
+  border-radius: 9px;
+  overflow: hidden;
+}
+.adm-cover-opt__img svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ---------- Rappel, case à cocher ---------- */
+.adm-note {
+  padding: 10px 14px;
+  border-left: 3px solid var(--brand);
+  border-radius: 6px;
+  background: var(--bg);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.adm-check {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  cursor: pointer;
+}
+.adm-check input {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  accent-color: var(--brand);
+}
+.adm-check > span {
+  display: grid;
+  gap: 4px;
+}

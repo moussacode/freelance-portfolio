@@ -60,8 +60,8 @@ export const serviceSchema = z.object({
   visible: z.boolean(),
 });
 
-export const workSchema = z
-  .object({
+/** Réalisation, sans la règle « affiche ou image » (pour pouvoir l'étendre). */
+export const workBaseSchema = z.object({
     slug: slugSchema,
     name_fr: req(80),
     name_en: opt(80),
@@ -75,8 +75,13 @@ export const workSchema = z
     image_path: imagePathSchema.nullish().transform((v) => v ?? null),
     url: httpsUrl.nullish().or(z.literal('').transform(() => null)).transform((v) => v || null),
     visible: z.boolean(),
-  })
-  .refine((w) => w.cover_id !== null || w.image_path !== null, {
+});
+
+/** Une affiche dessinée ou une image importée : au moins l'une des deux. */
+export const hasCover = (w: { cover_id: string | null; image_path: string | null }) =>
+  w.cover_id !== null || w.image_path !== null;
+
+export const workSchema = workBaseSchema.refine(hasCover, {
     message: 'Choisissez une affiche ou importez une image.',
     path: ['cover_id'],
   });

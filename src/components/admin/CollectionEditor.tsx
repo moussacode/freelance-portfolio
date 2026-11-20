@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { ArrowUpToLine, Pencil, Plus, Trash2 } from 'lucide-react';
 import type { Locale } from '@/content/i18n';
 import { Dialog } from './Dialog';
 import { ConfirmDialog } from './ConfirmDialog';
@@ -46,7 +46,17 @@ type Config<T extends DraftItem> = {
   /** Message si plus aucun élément n'est visible (ex. « Le site n'aura plus aucun service. »). */
   lastVisibleWarning?: string;
   emptyText: string;
+  /** Grille de cartes avec couverture (réalisations) au lieu d'une liste. */
+  renderCover?: (item: T) => ReactNode;
+  /** Onglets Tous / Visibles / Masqués. */
+  tabs?: boolean;
+  /** Action « Mettre en avant » : place l'élément en première position. */
+  canFeature?: boolean;
+  /** Raison d'empêcher l'affichage sur le site (ex. avis sans accord écrit), ou null. */
+  blockVisible?: (item: T) => string | null;
 };
+
+type Tab = 'all' | 'visible' | 'hidden';
 
 /**
  * Page de gestion d'une liste (services, questions) :
@@ -64,6 +74,7 @@ export function CollectionEditor<T extends DraftItem>(c: Config<T>) {
   const [lang, setLang] = useState<Locale>('fr');
   const [confirm, setConfirm] = useState<{ title: string; body: ReactNode; label: string; run: () => void } | null>(null);
   const [highlight, setHighlight] = useState<string | null>(null);
+  const [tab, setTab] = useState<Tab>('all');
   const opened = useRef(false);
 
   // ?nouveau=1 (depuis la recherche ⌘K) : ouvre directement le panneau d'ajout.
@@ -93,6 +104,11 @@ export function CollectionEditor<T extends DraftItem>(c: Config<T>) {
   };
 
   const toggleVisible = (item: T, visible: boolean) => {
+    const blocked = visible ? c.blockVisible?.(item) : null;
+    if (blocked) {
+      toast({ message: blocked, tone: 'error' });
+      return;
+    }
     const next = draft.items.map((i) => (i.key === item.key ? { ...i, visible } : i));
     guardLastVisible(next, () => draft.update(item.key, { visible } as Partial<T>), `Masquer « ${c.titleOf(item)} » ?`);
   };
@@ -117,6 +133,11 @@ export function CollectionEditor<T extends DraftItem>(c: Config<T>) {
       const first = Object.keys(errors)[0] ?? '';
       if (first.endsWith('_en') || first.includes('_en.')) setLang('en');
       else if (first.endsWith('_fr') || first.includes('_fr.')) setLang('fr');
+      return;
+    }
+    const blocked = panel.value.visible ? c.blockVisible?.(panel.value) : null;
+    if (blocked) {
+      setPanelErrors({ visible: blocked });
       return;
     }
     const value = c.finalize ? c.finalize(panel.value, draft.items, panel.isNew) : panel.value;
@@ -189,13 +210,32 @@ export function CollectionEditor<T extends DraftItem>(c: Config<T>) {
         </EmptyState>
       ) : (
         <>
+          {c.tabs && (
+            <div className="adm-tabs" role="group" aria-label="Filtrer">
+              {(
+                [
+                  ['all', 'Tous', draft.items.length],
+                  ['visible', 'Visibles', draft.items.length - hidden],
+                  ['hidden', 'Masqués', hidden],
+                ] as const
+              ).map(([id, label, n]) => (
+                <button key={id} type="button" aria-pressed={tab === id} onClick={() => setTab(id)}>
+                  {label} <span className="adm-tabs__n">{n}</span>
+                </button>
+              ))}
+            </div>
+          )}
           <p className="adm-help adm-list-help">
             {draft.items.length} au total · {plural(draft.items.length - hidden, 'visible')} sur le site
-            {hidden > 0 && ` · ${plural(hidden, 'masqué')}`}. Glissez une ligne pour changer l’ordre sur le site.
+            {hidden > 0 && ` · ${plural(hidden, 'masqué')}`}. {tab === 'all'
+              ? `Glissez ${c.renderCover ? 'une carte' : 'une ligne'} pour changer l’ordre sur le site.`
+              : 'Ordre modifiable dans l’onglet « Tous ».'}
           </p>
           <SortableList
-            className="adm-list"
-            items={draft.items}
+            className={c.renderCover ? 'adm-grid' : 'adm-list'}
+            layout={c.renderCover ? 'grid' : 'list'}
+            sortable={tab === 'all'}
+            items={draft.items.filter((i) => (tab === 'all' ? true : tab === 'visible' ? i.visible : !i.visible))}
             labelOf={c.titleOf}
             onMove={draft.move}
             renderItem={(item, handle) => {
@@ -204,10 +244,11 @@ export function CollectionEditor<T extends DraftItem>(c: Config<T>) {
               const meta = c.metaOf?.(item) ?? [];
               return (
                 <div
-                  className="adm-item card"
+                  className={`adm-item card${c.renderCover ? ' adm-item--card' : ''}`}
                   data-hidden={!item.visible || undefined}
                   data-highlight={highlight === item.key || undefined}
                 >
+                  {c.renderCover && <div className="adm-item__cover">{c.renderCover(item)}</div>}
                   {handle}
                   <div className="adm-item__main">
                     <button type="button" className="adm-item__title" onClick={() => openEdit(item)}>
@@ -237,6 +278,18 @@ export function CollectionEditor<T extends DraftItem>(c: Config<T>) {
                     />
                   </label>
                   <div className="adm-item__actions">
+                    {c.canFeature && (
+                      <button
+                        type="button"
+                        className="adm-icon-btn"
+                        onClick={() => draft.move(draft.items.findIndex((i) => i.key === item.key), 0)}
+                        disabled={draft.items[0]?.key === item.key}
+                        aria-label={`Mettre en avant « ${c.titleOf(item)} » (première position)`}
+                        title="Mettre en avant (première position)"
+                      >
+                        <ArrowUpToLine aria-hidden="true" />
+                      </button>
+                    )}
                     <button type="button" className="adm-icon-btn" onClick={() => openEdit(item)} aria-label={`Modifier « ${c.titleOf(item)} »`}>
                       <Pencil aria-hidden="true" />
                     </button>
@@ -286,7 +339,16 @@ export function CollectionEditor<T extends DraftItem>(c: Config<T>) {
             <div className="adm-toggle">
               <div>
                 <p className="adm-toggle__title">Visible sur le site</p>
-                <p className="adm-help">Masqué : gardé dans l’admin, absent du site.</p>
+                <p className="adm-help">
+                  {panelErrors.visible ? (
+                    <span className="adm-error adm-error--inline">
+                      <span className="adm-error__badge" aria-hidden="true" />
+                      {panelErrors.visible}
+                    </span>
+                  ) : (
+                    'Masqué : gardé dans l’admin, absent du site.'
+                  )}
+                </p>
               </div>
               <Switch
                 checked={panel.value.visible}

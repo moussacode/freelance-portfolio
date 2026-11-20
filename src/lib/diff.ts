@@ -12,7 +12,8 @@ export function countChanges(a: unknown, b: unknown): number {
   if (isObj(a) && isObj(b)) {
     const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
     let n = 0;
-    for (const k of keys) n += countChanges(a[k], b[k]);
+    // `preview` (aperçu local d'une image) accompagne toujours un fichier choisi : déjà compté avec lui.
+    for (const k of keys) if (k !== 'preview') n += countChanges(a[k], b[k]);
     return n;
   }
   return 1;

@@ -13,9 +13,9 @@ const nextConfig = {
   async redirects() {
     return [{ source: '/', destination: '/fr', permanent: false }];
   },
-  // Images envoyées par l'admin (2 Mo maximum, vérifié côté serveur) : la limite par défaut est 1 Mo.
+  // Images envoyées par l'admin à l'enregistrement : jusqu'à 6 images de 2 Mo (vérifié côté serveur).
   experimental: {
-    serverActions: { bodySizeLimit: '3mb' },
+    serverActions: { bodySizeLimit: '13mb' },
   },
   images: {
     remotePatterns: supabaseHost

@@ -11,11 +11,15 @@ import {
   type DragEndEvent,
   type UniqueIdentifier,
 } from '@dnd-kit/core';
-import { SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import {
+  SortableContext,
+  rectSortingStrategy,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { GripVertical } from 'lucide-react';
-
-export type HandleProps = Record<string, unknown> & { ref: (el: HTMLElement | null) => void };
 
 /**
  * Liste réordonnable par glisser-déposer (souris, toucher, clavier).
@@ -28,12 +32,18 @@ export function SortableList<T extends { key: string }>({
   onMove,
   renderItem,
   className,
+  layout = 'list',
+  sortable = true,
 }: {
   items: T[];
   labelOf: (item: T) => string;
   onMove: (from: number, to: number) => void;
   renderItem: (item: T, handle: ReactNode, state: { dragging: boolean }) => ReactNode;
   className?: string;
+  /** Grille (réalisations) ou liste verticale. */
+  layout?: 'list' | 'grid';
+  /** false : pas de glisser-déposer (liste filtrée), poignées masquées. */
+  sortable?: boolean;
 }) {
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
@@ -70,10 +80,10 @@ export function SortableList<T extends { key: string }>({
         },
       }}
     >
-      <SortableContext items={items.map((i) => i.key)} strategy={verticalListSortingStrategy}>
+      <SortableContext items={items.map((i) => i.key)} strategy={layout === 'grid' ? rectSortingStrategy : verticalListSortingStrategy}>
         <ul className={className}>
           {items.map((item) => (
-            <SortableItem key={item.key} id={item.key} label={labelOf(item)}>
+            <SortableItem key={item.key} id={item.key} label={labelOf(item)} disabled={!sortable}>
               {(handle, dragging) => renderItem(item, handle, { dragging })}
             </SortableItem>
           ))}
@@ -86,14 +96,16 @@ export function SortableList<T extends { key: string }>({
 function SortableItem({
   id,
   label,
+  disabled,
   children,
 }: {
   id: string;
   label: string;
+  disabled: boolean;
   children: (handle: ReactNode, dragging: boolean) => ReactNode;
 }) {
-  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({ id });
-  const handle = (
+  const { attributes, listeners, setNodeRef, setActivatorNodeRef, transform, transition, isDragging } = useSortable({ id, disabled });
+  const handle = disabled ? null : (
     <button
       type="button"
       className="adm-handle"
