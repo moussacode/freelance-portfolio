@@ -314,7 +314,12 @@ function Works() {
         </h2>
         <p className="sec__intro">{dict.works.intro}</p>
       </header>
-      <ul className="works" data-rows>
+      {/* Mise en page selon le nombre : 1 = image et texte côte à côte ; multiple de 3 = trois colonnes ; sinon deux. */}
+      <ul
+        className="works"
+        data-layout={works.length === 1 ? 'solo' : works.length % 3 === 0 ? 'trio' : 'duo'}
+        data-rows
+      >
         {works.map((w) => (
           <li key={w.id} className="work">
             <div className="work__cover">
