@@ -231,36 +231,134 @@
   cursor: not-allowed;
 }
 
-/* ---------- Indicateur d'enregistrement ---------- */
-.adm-save {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+/* ---------- Modifications en attente ---------- */
+/* Pastille teal : modifié, pas encore enregistré. (Le rouge reste réservé aux badges d'erreur.) */
+.adm-changed {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-left: 8px;
+  border-radius: 50%;
+  background: var(--brand);
+  vertical-align: middle;
 }
-.adm-save__pill {
+.adm-msg[data-changed] {
+  border-color: var(--brand);
+}
+.adm-pending {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-height: 36px;
-  padding: 0 14px;
-  border-radius: 999px;
-  background: var(--bg-raise);
-  border: 1px solid var(--line);
-  color: var(--ink);
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 600;
+  color: var(--brand);
 }
-.adm-save__dot {
-  width: 8px;
-  height: 8px;
+.adm-pending .adm-changed {
+  margin: 0 8px 0 0;
+}
+
+/* Barre d'enregistrement : flotte en bas de l'écran (verre), visible dès qu'il y a un changement. */
+.adm-main {
+  padding-bottom: 128px;
+}
+.adm-savebar {
+  position: fixed;
+  left: calc(var(--side) + 24px);
+  right: 24px;
+  bottom: 20px;
+  z-index: 40;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px 16px;
+  max-width: 920px;
+  margin-inline: auto;
+  padding: 10px 10px 10px 20px;
+  border-radius: 22px;
+  color: var(--ink);
+  transition:
+    transform 0.25s var(--ease),
+    opacity 0.25s var(--ease),
+    visibility 0.25s;
+}
+.adm-savebar[data-show='false'] {
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(16px);
+}
+.adm-savebar__text {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+}
+.adm-savebar__dot {
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   background: var(--brand);
 }
-.adm-save[data-status='pending'] .adm-save__dot,
-.adm-save[data-status='saving'] .adm-save__dot {
-  background: var(--ink-2);
+.adm-savebar__actions {
+  display: flex;
+  gap: 8px;
 }
-.adm-save[data-status='invalid'] .adm-save__dot,
-.adm-save[data-status='error'] .adm-save__dot {
-  background: var(--error);
+.adm-savebar .btn[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
+@media (max-width: 899px) {
+  .adm-savebar {
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    padding: 10px 10px 10px 16px;
+  }
+  .adm-savebar__actions {
+    flex: 1 0 100%;
+  }
+  .adm-savebar__actions .btn {
+    flex: 1;
+  }
+}
+/* Les toasts passent au-dessus de la barre. */
+.adm-toasts {
+  bottom: 96px;
+}
+
+/* ---------- Confirmation : ancienne et nouvelle valeur ---------- */
+.adm-confirm {
+  display: grid;
+  gap: 14px;
+  line-height: 1.5;
+}
+.adm-compare {
+  display: grid;
+  gap: 10px;
+}
+.adm-compare > div {
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+.adm-compare dt {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.adm-compare dd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.adm-compare__old {
+  color: var(--ink-2);
+  text-decoration: line-through;
+}
+.adm-compare__new {
+  font-weight: 700;
 }

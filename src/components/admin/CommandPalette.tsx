@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { CornerDownLeft, Eye, Plus, Search, type LucideIcon } from 'lucide-react';
 import { mainNav, settingsNav } from './nav';
 import { useModalDialog } from './useModalDialog';
+import { useLeaveGuard } from './unsaved';
 
 /** Un contenu trouvable par la recherche (service, réalisation, question, avis). */
 export type SearchItem = { label: string; hint: string; href: string };
@@ -32,6 +33,7 @@ const normalize = (s: string) =>
  */
 export function PaletteProvider({ items, children }: { items: SearchItem[]; children: ReactNode }) {
   const router = useRouter();
+  const { guard } = useLeaveGuard();
   const [isOpen, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
@@ -81,7 +83,7 @@ export function PaletteProvider({ items, children }: { items: SearchItem[]; chil
     if (!c) return;
     dialog.ref.current?.close();
     if (c.external) window.open(c.href, '_blank', 'noopener');
-    else router.push(c.href);
+    else guard(() => router.push(c.href));
   };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {

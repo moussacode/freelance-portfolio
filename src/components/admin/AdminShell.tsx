@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Eye, LogOut, Menu, PanelLeftClose, PanelLeftOpen, Search, X } from 'lucide-react';
 import { LogoMark, LogoWord } from '@/components/Logo';
 import { signOut } from '@/app/admin/actions';
@@ -10,6 +10,7 @@ import { mainNav, settingsNav, isActive, type CountKey, type NavItem } from './n
 import { PaletteProvider, usePalette, type SearchItem } from './CommandPalette';
 import { ToastProvider } from './Toasts';
 import { useModalDialog } from './useModalDialog';
+import { UnsavedProvider, useGuardedClick, useLeaveGuard } from './unsaved';
 
 type Props = {
   counts: Partial<Record<CountKey, number>>;
@@ -27,9 +28,11 @@ const STORAGE_KEY = 'mc-admin-sidebar';
 export function AdminShell(props: Props) {
   return (
     <ToastProvider>
-      <PaletteProvider items={props.items}>
-        <Frame {...props} />
-      </PaletteProvider>
+      <UnsavedProvider>
+        <PaletteProvider items={props.items}>
+          <Frame {...props} />
+        </PaletteProvider>
+      </UnsavedProvider>
     </ToastProvider>
   );
 }
@@ -81,9 +84,7 @@ function Frame({ counts, userName, children }: Props) {
 
       {/* Mobile : barre du haut et tiroir. */}
       <div className="adm-top glass">
-        <Link href="/admin" className="adm-brand" aria-label="Admin MoussaCode, vue d’ensemble">
-          <LogoMark className="adm-brand__mark" />
-        </Link>
+        <BrandLink />
         <div className="adm-top__actions">
           <button type="button" className="adm-icon-btn" onClick={() => palette.open()} aria-label="Rechercher">
             <Search aria-hidden="true" />
@@ -133,10 +134,7 @@ function SideContent({
   return (
     <div className="adm-side__in">
       <div className="adm-side__top">
-        <Link href="/admin" className="adm-brand" aria-label="Admin MoussaCode, vue d’ensemble" data-tip={collapsed ? 'Vue d’ensemble' : undefined}>
-          <LogoMark className="adm-brand__mark" />
-          <LogoWord className="adm-brand__word" />
-        </Link>
+        <BrandLink tip={collapsed ? 'Vue d’ensemble' : undefined} withWord />
         {children}
       </div>
 
@@ -175,11 +173,11 @@ function SideContent({
             <strong>{userName}</strong>
             <span>Administrateur</span>
           </span>
-          <form action={signOut} className="adm-user__out">
+          <LogoutForm>
             <button type="submit" className="adm-icon-btn" aria-label="Se déconnecter" data-tip="Se déconnecter">
               <LogOut aria-hidden="true" />
             </button>
-          </form>
+          </LogoutForm>
         </div>
       </div>
     </div>
@@ -187,10 +185,18 @@ function SideContent({
 }
 
 function NavLink({ item, pathname, count }: { item: NavItem; pathname: string; count?: number }) {
+  const router = useRouter();
+  const onClick = useGuardedClick(item.href, (h) => router.push(h));
   const Icon = item.icon;
   const active = isActive(pathname, item.href);
   return (
-    <Link className="adm-link" href={item.href} aria-current={active ? 'page' : undefined} data-tip={item.label}>
+    <Link
+      className="adm-link"
+      href={item.href}
+      onClick={onClick}
+      aria-current={active ? 'page' : undefined}
+      data-tip={item.label}
+    >
       <Icon aria-hidden="true" />
       <span className="adm-link__label">{item.label}</span>
       {count !== undefined && (
@@ -201,5 +207,36 @@ function NavLink({ item, pathname, count }: { item: NavItem; pathname: string; c
         </span>
       )}
     </Link>
+  );
+}
+
+/** Logo : retour à la vue d'ensemble, protégé contre la perte de modifications. */
+function BrandLink({ tip, withWord }: { tip?: string; withWord?: boolean }) {
+  const router = useRouter();
+  const onClick = useGuardedClick('/admin', (h) => router.push(h));
+  return (
+    <Link href="/admin" className="adm-brand" aria-label="Admin MoussaCode, vue d’ensemble" data-tip={tip} onClick={onClick}>
+      <LogoMark className="adm-brand__mark" />
+      {withWord && <LogoWord className="adm-brand__word" />}
+    </Link>
+  );
+}
+
+/** Déconnexion : avec des modifications en attente, confirmation d'abord. */
+function LogoutForm({ children }: { children: ReactNode }) {
+  const { guard, blocked } = useLeaveGuard();
+  return (
+    <form
+      action={signOut}
+      className="adm-user__out"
+      onSubmit={(e) => {
+        if (!blocked()) return;
+        e.preventDefault();
+        const form = e.currentTarget;
+        guard(() => form.requestSubmit());
+      }}
+    >
+      {children}
+    </form>
   );
 }
