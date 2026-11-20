@@ -8,6 +8,14 @@ import 'server-only';
  * (l'admin écrit avec la session de l'utilisateur, filtrée par RLS et is_admin()).
  * Seul le script scripts/seed.ts l'utilise, en local, hors du bundle Next.
  */
+/**
+ * Token de l'API Web Analytics de Vercel (lecture des statistiques dans l'admin).
+ * Facultatif : absent ou expiré, la carte « Visites » affiche « Statistiques indisponibles ».
+ */
+export function analyticsToken(): string | null {
+  return process.env.VERCEL_ANALYTICS_TOKEN || null;
+}
+
 export function cronSecret(): string {
   const secret = process.env.CRON_SECRET;
   if (!secret || secret.length < 32) {
