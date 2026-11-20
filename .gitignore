@@ -6,3 +6,7 @@ out
 *.tsbuildinfo
 next-env.d.ts
 .DS_Store
+
+# Schéma du portfolio : sa copie de référence vit dans le dépôt du portfolio
+supabase/supabase-admin.sql
+!.env.example

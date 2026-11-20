@@ -1,28 +1,18 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
-import localFont from 'next/font/local';
 import { notFound } from 'next/navigation';
 import { Shell } from '@/components/Shell';
 import { htmlLang, isLocale, locales } from '@/content/i18n';
 import { getDict } from '@/content/ui';
 import { person } from '@/content/site';
 import { bootScript } from '@/lib/boot';
+import { getSiteContent } from '@/lib/content';
+import { Analytics } from '@vercel/analytics/next';
+import { bricolage, inter } from '../fonts';
 import '../globals.css';
 
-// Polices du design system « Studio clair » : Bricolage Grotesque pour les titres, Inter pour le texte.
-const bricolage = localFont({
-  src: '../../fonts/Bricolage-latin.woff2',
-  variable: '--font-bricolage',
-  weight: '200 800',
-  display: 'swap',
-});
-const inter = localFont({
-  src: '../../fonts/Inter-latin.woff2',
-  variable: '--font-inter',
-  weight: '100 900',
-  display: 'swap',
-});
-
+// ISR : voir page.tsx. Valeur littérale exigée par Next (= CONTENT_REVALIDATE).
+export const revalidate = 3600;
 export const dynamicParams = false;
 export const generateStaticParams = () => locales.map((locale) => ({ locale }));
 
@@ -75,6 +65,8 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   if (!isLocale(locale)) notFound();
 
   const dict = getDict(locale);
+  const content = await getSiteContent();
+  const { email, socials } = content.settings;
   // Données structurées : un prestataire de services, pour le référencement local.
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -82,11 +74,11 @@ export default async function LocaleLayout({ children, params }: { children: Rea
     name: person.handle,
     description: dict.meta.description,
     url: person.site,
-    email: person.email,
+    email: email ?? undefined,
     founder: { '@type': 'Person', name: person.name },
     address: { '@type': 'PostalAddress', addressLocality: 'Dakar', addressCountry: 'SN' },
     areaServed: 'SN',
-    sameAs: [person.github, person.linkedin],
+    sameAs: [socials.github, socials.linkedin, socials.instagram, socials.tiktok].filter(Boolean),
   };
 
 
@@ -94,10 +86,15 @@ export default async function LocaleLayout({ children, params }: { children: Rea
     <html lang={htmlLang[locale]} className={`${bricolage.variable} ${inter.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+        {/* « < » échappé : une valeur venue de la base ne peut pas fermer la balise et injecter un script. */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
       </head>
       <body>
-        <Shell locale={locale}>{children}</Shell>
+        <Shell locale={locale} content={content}>
+          {children}
+        </Shell>
+        {/* Vercel Web Analytics : pages vues anonymes, sans cookie. Pas de suivi maison. */}
+        <Analytics />
       </body>
     </html>
   );

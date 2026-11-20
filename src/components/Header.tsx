@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { locales, localeNames, type Locale } from '@/content/i18n';
 import { person } from '@/content/site';
 import { useApp } from './AppContext';
+import { useContent } from './ContentContext';
 import { TLink } from './TLink';
 import { Moon, Sun } from './Icons';
 
@@ -22,6 +23,7 @@ const DESKTOP = '(min-width: 820px)';
 
 export function Header() {
   const { locale, dict, theme, toggleTheme } = useApp();
+  const { settings, works } = useContent();
   const pathname = usePathname();
   const [mode, setMode] = useState<Mode>('full');
   const [open, setOpen] = useState(false); // déployée à la demande (survol, focus, clic)
@@ -100,7 +102,7 @@ export function Header() {
 
   const links = [
     { id: 'services', label: dict.nav.services },
-    // { id: 'realisations', label: dict.nav.works },
+    ...(works.length > 0 ? [{ id: 'realisations', label: dict.nav.works }] : []),
     { id: 'methode', label: dict.nav.method },
     { id: 'questions', label: dict.nav.faq },
   ];
@@ -135,11 +137,11 @@ export function Header() {
       >
         <TLink href={`/${locale}`} className="hdr__id" aria-label={dict.a11y.home}>
           <span className="hdr__avatar">
-            <Image src="/img/avatar.webp" alt="" width={36} height={36} priority />
-            {person.available && <i className="hdr__status" title={dict.a11y.available} />}
+            <Image src={settings.avatar} alt="" width={36} height={36} priority />
+            {settings.available && <i className="hdr__status" title={dict.a11y.available} />}
           </span>
           <span className="hdr__name">{person.handle}</span>
-          {person.available && <span className="sr">, {dict.a11y.available}</span>}
+          {settings.available && <span className="sr">, {dict.a11y.available}</span>}
         </TLink>
 
         <div className="hdr__more" inert={!expanded}>

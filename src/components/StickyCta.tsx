@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { person, waLink } from '@/content/site';
+import { buildWhatsAppLink } from '@/lib/contact';
 import { useApp } from './AppContext';
+import { useContent } from './ContentContext';
 import { Chat } from './Icons';
 
 /**
@@ -11,6 +12,7 @@ import { Chat } from './Icons';
  */
 export function StickyCta() {
   const { dict, locale } = useApp();
+  const { settings } = useContent();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -32,12 +34,12 @@ export function StickyCta() {
     return () => io.disconnect();
   }, [locale]);
 
-  const href = person.whatsapp ? waLink(dict.hero.waHello) : `#contact`;
+  const wa = buildWhatsAppLink(settings, { context: 'contact', lang: locale });
   return (
     <div className="sticky" data-show={show} inert={!show}>
-      <a className="btn btn--wa" href={href} target={person.whatsapp ? '_blank' : undefined} rel="noopener noreferrer">
+      <a className="btn btn--wa" href={wa ?? '#contact'} target={wa ? '_blank' : undefined} rel="noopener noreferrer">
         <Chat />
-        {person.whatsapp ? dict.sticky : dict.nav.quote}
+        {wa ? dict.sticky : dict.nav.quote}
       </a>
     </div>
   );

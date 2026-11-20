@@ -366,6 +366,10 @@
   border-radius: var(--radius-card);
   overflow: hidden;
 }
+/* Image importée depuis l'admin, à la place de l'affiche dessinée. */
+.work__img {
+  object-fit: cover;
+}
 .work__name {
   font-size: clamp(1.5rem, 2.2vw, 2rem);
   letter-spacing: -0.02em;
@@ -381,9 +385,90 @@
 .works__all {
   margin-top: clamp(28px, 4vh, 44px);
 }
+/* Le tag d'une réalisation, juste sous l'image, n'a pas de point ambre :
+   il passerait pour une pagination et ferait doublon avec l'ambre des affiches. */
+.work .tag::before {
+  content: none;
+}
+.work .tag {
+  padding-inline: 14px;
+}
+
+/* Mise en page selon le nombre de réalisations (data-layout, voir FreelanceView).
+   « Large » : image à gauche, texte à droite, centré verticalement (rangées vides 1fr en haut et en bas). */
 @media (min-width: 760px) {
   .works {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .works[data-layout='solo'] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* Carte seule, ou dernière carte seule sur sa ligne. */
+  :is(.works[data-layout='solo'] .work, .works[data-layout='duo'] .work:last-child:nth-child(odd)) {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-rows: 1fr repeat(5, auto) 1fr;
+    column-gap: clamp(24px, 4vw, 56px);
+  }
+  :is(.works[data-layout='solo'] .work, .works[data-layout='duo'] .work:last-child:nth-child(odd)) > .work__cover {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    margin-bottom: 0;
+  }
+  :is(.works[data-layout='solo'] .work, .works[data-layout='duo'] .work:last-child:nth-child(odd)) > :not(.work__cover) {
+    grid-column: 2;
+  }
+  :is(.works[data-layout='solo'] .work, .works[data-layout='duo'] .work:last-child:nth-child(odd)) > .tag {
+    grid-row: 2;
+  }
+  :is(.works[data-layout='solo'] .work, .works[data-layout='duo'] .work:last-child:nth-child(odd)) > .work__name {
+    grid-row: 3;
+  }
+  :is(.works[data-layout='solo'] .work, .works[data-layout='duo'] .work:last-child:nth-child(odd)) > .work__text {
+    grid-row: 4;
+  }
+  :is(.works[data-layout='solo'] .work, .works[data-layout='duo'] .work:last-child:nth-child(odd)) > .work__frame {
+    grid-row: 5;
+  }
+  :is(.works[data-layout='solo'] .work, .works[data-layout='duo'] .work:last-child:nth-child(odd)) > .tlink {
+    grid-row: 6;
+  }
+}
+/* Trois colonnes à partir de 1000 px ; entre 760 et 999 px, deux colonnes et la dernière en large. */
+@media (min-width: 760px) and (max-width: 999px) {
+  .works[data-layout='trio'] .work:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-rows: 1fr repeat(5, auto) 1fr;
+    column-gap: clamp(24px, 4vw, 56px);
+  }
+  .works[data-layout='trio'] .work:last-child:nth-child(odd) > .work__cover {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    margin-bottom: 0;
+  }
+  .works[data-layout='trio'] .work:last-child:nth-child(odd) > :not(.work__cover) {
+    grid-column: 2;
+  }
+  .works[data-layout='trio'] .work:last-child:nth-child(odd) > .tag {
+    grid-row: 2;
+  }
+  .works[data-layout='trio'] .work:last-child:nth-child(odd) > .work__name {
+    grid-row: 3;
+  }
+  .works[data-layout='trio'] .work:last-child:nth-child(odd) > .work__text {
+    grid-row: 4;
+  }
+  .works[data-layout='trio'] .work:last-child:nth-child(odd) > .work__frame {
+    grid-row: 5;
+  }
+  .works[data-layout='trio'] .work:last-child:nth-child(odd) > .tlink {
+    grid-row: 6;
+  }
+}
+@media (min-width: 1000px) {
+  .works[data-layout='trio'] {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

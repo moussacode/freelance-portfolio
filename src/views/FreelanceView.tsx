@@ -2,9 +2,11 @@
 
 import { useRef, useState, type FormEvent } from 'react';
 import Image from 'next/image';
-import { faq, mailLink, person, reasons, services, steps, testimonials, waLink, works } from '@/content/site';
+import { person, reasons, steps } from '@/content/site';
 import { tr } from '@/content/i18n';
 import { useApp } from '@/components/AppContext';
+import { useContent } from '@/components/ContentContext';
+import { buildMailLink, buildWhatsAppLink } from '@/lib/contact';
 import { TLink } from '@/components/TLink';
 import { Accented } from '@/components/Accented';
 import { Poster } from '@/components/Cover';
@@ -15,13 +17,14 @@ import { createLiquid, type Liquid } from '@/lib/liquidTitle';
 
 export function FreelanceView() {
   const root = useRef<HTMLDivElement>(null);
+  const { works, testimonials } = useContent();
   useReveals(root);
   return (
     <div ref={root}>
       <Hero />
       <Reasons />
       <Services />
-      {/* <Works /> */}
+      {works.length > 0 && <Works />}
       <Method />
       {testimonials.length > 0 && <Testimonials />}
       <Faq />
@@ -33,6 +36,7 @@ export function FreelanceView() {
 /* ---------- Accueil : la promesse, l'action, le visage ---------- */
 function Hero() {
   const { locale, dict } = useApp();
+  const { services, works, settings } = useContent();
   const root = useRef<HTMLElement>(null);
 
   // Une entrée joueuse, en moins de deux secondes :
@@ -151,7 +155,7 @@ function Hero() {
     { scope: root },
   );
 
-  const hasWa = Boolean(person.whatsapp);
+  const wa = buildWhatsAppLink(settings, { context: 'contact', lang: locale });
   return (
     <section className="fhero" ref={root}>
       <div className="fhero__text">
@@ -177,8 +181,8 @@ function Hero() {
         </svg>
         <p className="fhero__lead">{dict.hero.lead}</p>
         <div className="fhero__cta">
-          {hasWa ? (
-            <a className="btn btn--wa btn--big" href={waLink(dict.hero.waHello)} target="_blank" rel="noopener noreferrer">
+          {wa ? (
+            <a className="btn btn--wa btn--big" href={wa} target="_blank" rel="noopener noreferrer">
               <Chat />
               {dict.hero.primary}
               <span className="sr">({dict.a11y.newTab})</span>
@@ -188,9 +192,11 @@ function Hero() {
               {dict.hero.primaryNoWa}
             </TLink>
           )}
-          {/* <TLink className="btn btn--big" href={`/${locale}#realisations`}>
-            {dict.hero.secondary}
-          </TLink> */}
+          {works.length > 0 && (
+            <TLink className="btn btn--big" href={`/${locale}#realisations`}>
+              {dict.hero.secondary}
+            </TLink>
+          )}
         </div>
       </div>
 
@@ -248,6 +254,7 @@ function Reasons() {
 /* ---------- Services ---------- */
 function Services() {
   const { locale, dict } = useApp();
+  const { services, settings } = useContent();
   return (
     <section id="services" className="sec">
       <header className="sec__head">
@@ -259,15 +266,15 @@ function Services() {
       <ul className="services" data-rows>
         {services.map((s) => {
           const name = tr(s.name, locale);
-          const href = person.whatsapp ? waLink(`${dict.services.waService} ${name}.`) : `/${locale}#contact`;
+          const wa = buildWhatsAppLink(settings, { context: 'quote', lang: locale, service: name });
           return (
             <li key={s.id} className="service card">
               <h3 className="service__name">{name}</h3>
               <p className="service__pitch">{tr(s.pitch, locale)}</p>
               <p className="label">{dict.services.includes}</p>
               <ul className="service__points">
-                {s.points.map((p) => (
-                  <li key={p.fr}>
+                {s.points.map((p, i) => (
+                  <li key={i}>
                     <span className="tick">
                       <Check />
                     </span>
@@ -277,8 +284,8 @@ function Services() {
               </ul>
               <a
                 className="service__ask"
-                href={href}
-                target={person.whatsapp ? '_blank' : undefined}
+                href={wa ?? `/${locale}#contact`}
+                target={wa ? '_blank' : undefined}
                 rel="noopener noreferrer"
                 aria-label={`${dict.services.ask} : ${name}`}
               >
@@ -295,42 +302,56 @@ function Services() {
   );
 }
 
-/* ---------- Réalisations ---------- */
-// function Works() {
-//   const { locale, dict } = useApp();
-//   return (
-//     <section id="realisations" className="sec">
-//       <header className="sec__head">
-//         <h2 className="sec__title" data-split>
-//           <Accented text={dict.works.title} />
-//         </h2>
-//         <p className="sec__intro">{dict.works.intro}</p>
-//       </header>
-//       <ul className="works" data-rows>
-//         {works.map((w) => (
-//           <li key={w.name.fr} className="work">
-//             <div className="work__cover">
-//               <Poster id={w.cover} />
-//             </div>
-//             <p className="tag">{tr(w.kind, locale)}</p>
-//             <h3 className="work__name">{tr(w.name, locale)}</h3>
-//             <p className="work__text">{tr(w.text, locale)}</p>
-//             <p className="work__frame">{tr(w.frame, locale)}</p>
-//           </li>
-//         ))}
-//       </ul>
-//       {/* {person.portfolio && (
-//         <p className="works__all">
-//           <a className="tlink" href={person.portfolio} target="_blank" rel="noopener noreferrer">
-//             {dict.works.all}
-//             <External />
-//             <span className="sr">({dict.a11y.newTab})</span>
-//           </a>
-//         </p>
-//       )} */}
-//     </section>
-//   );
-// }
+/* ---------- Réalisations (affichées seulement s'il y en a au moins une visible) ---------- */
+function Works() {
+  const { locale, dict } = useApp();
+  const { works } = useContent();
+  return (
+    <section id="realisations" className="sec">
+      <header className="sec__head">
+        <h2 className="sec__title" data-split>
+          <Accented text={dict.works.title} />
+        </h2>
+        <p className="sec__intro">{dict.works.intro}</p>
+      </header>
+      {/* Mise en page selon le nombre : 1 = image et texte côte à côte ; multiple de 3 = trois colonnes ; sinon deux. */}
+      <ul
+        className="works"
+        data-layout={works.length === 1 ? 'solo' : works.length % 3 === 0 ? 'trio' : 'duo'}
+        data-rows
+      >
+        {works.map((w) => (
+          <li key={w.id} className="work">
+            <div className="work__cover">
+              {w.image ? (
+                <Image className="work__img" src={w.image} alt="" fill sizes="(min-width: 760px) 45vw, 90vw" />
+              ) : (
+                w.cover && <Poster id={w.cover} />
+              )}
+            </div>
+            <p className="tag">{tr(w.kind, locale)}</p>
+            <h3 className="work__name">{tr(w.name, locale)}</h3>
+            <p className="work__text">{tr(w.text, locale)}</p>
+            <p className="work__frame">{tr(w.frame, locale)}</p>
+            {w.url && (
+              <a className="tlink" href={w.url} target="_blank" rel="noopener noreferrer">
+                {dict.works.visit} <External />
+                <span className="sr">({dict.a11y.newTab})</span>
+              </a>
+            )}
+          </li>
+        ))}
+      </ul>
+      <p className="works__all">
+        <a className="tlink" href={person.portfolio} target="_blank" rel="noopener noreferrer">
+          {dict.works.all}
+          <External />
+          <span className="sr">({dict.a11y.newTab})</span>
+        </a>
+      </p>
+    </section>
+  );
+}
 
 /* ---------- Méthode : une vraie suite d'étapes, donc numérotée ---------- */
 function Method() {
@@ -362,6 +383,7 @@ function Method() {
 /* ---------- Avis clients (affichés seulement s'il y en a de vrais) ---------- */
 function Testimonials() {
   const { locale, dict } = useApp();
+  const { testimonials } = useContent();
   return (
     <section className="sec">
       <header className="sec__head">
@@ -371,7 +393,7 @@ function Testimonials() {
       </header>
       <ul className="quotes">
         {testimonials.map((t) => (
-          <li key={t.author} className="card quote">
+          <li key={t.id} className="card quote">
             <blockquote>{tr(t.quote, locale)}</blockquote>
             <p className="label">{t.author}</p>
           </li>
@@ -384,6 +406,7 @@ function Testimonials() {
 /* ---------- Questions fréquentes ---------- */
 function Faq() {
   const { locale, dict } = useApp();
+  const { faq } = useContent();
   return (
     <section id="questions" className="sec">
       <header className="sec__head">
@@ -393,7 +416,7 @@ function Faq() {
       </header>
       <div className="faq">
         {faq.map((f) => (
-          <details key={f.q.fr} className="faq__item card">
+          <details key={f.id} className="faq__item card">
             <summary>
               {tr(f.q, locale)}
               <span className="faq__plus" aria-hidden="true" />
@@ -409,30 +432,39 @@ function Faq() {
 /* ---------- Contact : un mini-brief qui part sur WhatsApp ou par e-mail ---------- */
 function Contact() {
   const { locale, dict } = useApp();
+  const { services, settings } = useContent();
   const c = dict.contact;
   const [name, setName] = useState('');
-  const [type, setType] = useState(tr(services[0].name, locale));
+  const [type, setType] = useState(services[0] ? tr(services[0].name, locale) : c.other);
   const [message, setMessage] = useState('');
   const [copied, setCopied] = useState(false);
-  const hasWa = Boolean(person.whatsapp);
+  const hasWa = Boolean(settings.whatsapp);
+  const email = settings.email;
 
-  const compose = () =>
-    [c.intro, name.trim() && `${c.iAm} ${name.trim()}.`, `${c.need} ${type}.`, message.trim()].filter(Boolean).join('\n');
+  // L'en-tête du brief vient des réglages (message « brief ») ; le reste, du formulaire.
+  const body = () =>
+    [name.trim() && `${c.iAm} ${name.trim()}.`, `${c.need} ${type}.`, message.trim()].filter(Boolean).join('\n');
+  const compose = () => [tr(settings.messages.brief, locale), body()].filter(Boolean).join('\n');
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    window.open(hasWa ? waLink(compose()) : mailLink(c.subject, compose()), hasWa ? '_blank' : '_self', 'noopener');
+    const wa = buildWhatsAppLink(settings, { context: 'brief', lang: locale, body: body() });
+    const target = wa ?? buildMailLink(settings, c.subject, compose());
+    if (target) window.open(target, wa ? '_blank' : '_self', 'noopener');
   };
 
   const copy = async () => {
+    if (!email) return;
     try {
-      await navigator.clipboard.writeText(person.email);
+      await navigator.clipboard.writeText(email);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2400);
     } catch {
-      window.location.href = `mailto:${person.email}`;
+      window.location.href = `mailto:${email}`;
     }
   };
+
+  const mailHref = buildMailLink(settings, c.subject, compose());
 
   return (
     <section id="contact" className="fcontact">
@@ -442,18 +474,20 @@ function Contact() {
             <Accented text={c.title} />
           </h2>
           <p className="fcontact__lead">{c.lead}</p>
-          <div className="fcontact__direct">
-            <p className="label">{c.direct}</p>
-            <a className="fcontact__mail" href={`mailto:${person.email}`}>
-              {person.email}
-            </a>
-            <button type="button" className="tlink" onClick={copy}>
-              {copied ? c.copied : c.copy}
-            </button>
-            <span className="sr" role="status">
-              {copied ? c.copied : ''}
-            </span>
-          </div>
+          {email && (
+            <div className="fcontact__direct">
+              <p className="label">{c.direct}</p>
+              <a className="fcontact__mail" href={`mailto:${email}`}>
+                {email}
+              </a>
+              <button type="button" className="tlink" onClick={copy}>
+                {copied ? c.copied : c.copy}
+              </button>
+              <span className="sr" role="status">
+                {copied ? c.copied : ''}
+              </span>
+            </div>
+          )}
         </div>
 
         <form className="brief card" onSubmit={submit}>
@@ -486,8 +520,8 @@ function Contact() {
               {hasWa ? <Chat /> : <Mail />}
               {hasWa ? c.sendWa : c.sendMail}
             </button>
-            {hasWa && (
-              <a className="btn btn--big" href={mailLink(c.subject, compose())}>
+            {hasWa && mailHref && (
+              <a className="btn btn--big" href={mailHref}>
                 <Mail />
                 {c.sendMail}
               </a>

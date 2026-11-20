@@ -1,0 +1,97 @@
+/*
+  Admin. Même design system que le site (tokens.css, base.css) : on n'ajoute que la mise en page propre à l'admin.
+  Pas d'ombre lourde, pas de dégradé. Le rouge d'erreur ne sert qu'au badge d'erreur.
+*/
+
+/* Cartes de l'admin : bordure fine à la place de l'ombre (le site garde ses cartes flottantes). */
+.adm .card {
+  box-shadow: none;
+  border: 1px solid var(--line);
+}
+
+/* ---------- Écrans centrés (connexion, page provisoire) ---------- */
+.adm-center {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+}
+.adm-card {
+  width: min(100%, 440px);
+  display: grid;
+  gap: 18px;
+  padding: clamp(24px, 4vw, 36px);
+}
+.adm-card .tag {
+  justify-self: start;
+}
+.adm-title {
+  font-size: clamp(1.8rem, 4vw, 2.3rem);
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+.adm-muted {
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.adm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+}
+.adm-card .btn[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ---------- Message d'erreur : texte encre + badge rouge ---------- */
+.adm-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.adm-error__badge {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  margin-top: 0.4em;
+  border-radius: 50%;
+  background: var(--error);
+}
+
+/* ---------- Enrôlement TOTP ---------- */
+.adm-steps {
+  display: grid;
+  gap: 6px;
+  padding-left: 1.2em;
+  color: var(--ink-2);
+  line-height: 1.45;
+  list-style: decimal;
+}
+.adm-qr {
+  justify-self: center;
+  width: 196px;
+  height: 196px;
+  padding: 10px;
+  border-radius: 18px;
+  background: #fff; /* le QR code doit rester noir sur blanc, même en thème sombre */
+}
+.adm-secret {
+  display: grid;
+  gap: 6px;
+}
+.adm-secret code {
+  font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+  font-size: 0.92rem;
+  word-break: break-all;
+  user-select: all;
+}
+.field input.adm-code {
+  font-size: 1.5rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.4em;
+  text-align: center;
+}
